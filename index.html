@@ -17,6 +17,7 @@
     --card-line:#E7EBF1;
     --ink-muted:#5C6A82;
     --yellow:#FFC72C;
+    --green:#1C8A4B;
     --radius-xl:24px;
     --radius-lg:18px;
     --radius-md:14px;
@@ -41,9 +42,9 @@
   /* ---------- App shell ---------- */
   .app{
     display:grid;
-    grid-template-columns:280px minmax(0,1fr) 320px;
+    grid-template-columns:280px minmax(0,1fr) 340px;
     gap:20px;
-    max-width:1400px;
+    max-width:1440px;
     margin:0 auto;
     padding:20px;
     align-items:start;
@@ -158,6 +159,7 @@
   .card p + p{margin-top:8px;}
   .card ul{ margin:8px 0 0; padding-left:18px; }
   .card li{ font-size:0.95rem; line-height:1.6; color:#2B3A5C; }
+  .card li + li{margin-top:4px;}
   .stat-row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
   .stat-chip{ background:var(--bg); border-radius:12px; padding:8px 12px; font-size:0.82rem; font-weight:700; color:var(--navy); }
   .hero-card{
@@ -180,60 +182,101 @@
     .grid-2{grid-template-columns:1fr;}
   }
 
-  /* ---------- Chat ---------- */
-  .chat{ display:flex; flex-direction:column; height:calc(100vh - 40px); }
-  .chat-head{
-    display:flex; align-items:center; gap:10px; padding:18px;
-    border-bottom:1px solid var(--card-line); border-radius:var(--radius-xl) var(--radius-xl) 0 0;
+  /* ---------- Right rail: Vivência em Condomínio ---------- */
+  .vive{ display:flex; flex-direction:column; height:calc(100vh - 40px); }
+  .vive-head{
+    padding:20px 18px; border-radius:var(--radius-xl) var(--radius-xl) 0 0;
     background:var(--navy); color:white;
   }
-  .chat-head .bot-avatar{
-    width:38px;height:38px; border-radius:50%; background:var(--red);
-    display:flex;align-items:center;justify-content:center; font-size:1.15rem; flex-shrink:0;
-  }
-  .chat-head .title{font-weight:800; font-size:0.98rem;}
-  .chat-head .status{font-size:0.72rem; color:#B9E7C9; font-weight:700;}
-  .status::before{content:"●"; color:#3ED07A; margin-right:4px;}
+  .vive-head .title{font-weight:800; font-size:1.05rem; display:flex; align-items:center; gap:8px;}
+  .vive-head .sub{font-size:0.76rem; color:#B9C4E0; font-weight:600; margin-top:4px;}
 
-  .chat-body{
-    flex:1; overflow-y:auto; padding:18px 14px; display:flex; flex-direction:column; gap:10px; background:var(--bg);
-  }
-  .bubble{ max-width:82%; padding:11px 14px; border-radius:16px; font-size:0.88rem; line-height:1.45; animation:pop .25s ease; }
-  @keyframes pop{ from{opacity:0; transform:scale(.92) translateY(6px);} to{opacity:1; transform:scale(1) translateY(0);} }
-  .bubble.bot{ align-self:flex-start; background:white; color:var(--navy); border-bottom-left-radius:4px; box-shadow:var(--shadow-soft); }
-  .bubble.user{ align-self:flex-end; background:var(--navy); color:white; border-bottom-right-radius:4px; }
-  .bubble.typing{ align-self:flex-start; background:white; display:flex; gap:4px; padding:14px 16px; box-shadow:var(--shadow-soft); }
-  .typing span{ width:6px;height:6px; background:#9AA6BE; border-radius:50%; display:inline-block; animation:bounce 1s infinite ease-in-out; }
-  .typing span:nth-child(2){animation-delay:.15s;}
-  .typing span:nth-child(3){animation-delay:.3s;}
-  @keyframes bounce{ 0%,80%,100%{transform:translateY(0); opacity:.5;} 40%{transform:translateY(-5px); opacity:1;} }
+  .vive-body{ flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:10px; background:var(--bg); }
 
-  .chat-input{
-    display:flex; align-items:center; gap:8px; padding:14px;
-    border-top:1px solid var(--card-line); background:white; border-radius:0 0 var(--radius-xl) var(--radius-xl);
+  .vive-item{
+    background:white; border-radius:var(--radius-md); border:1px solid var(--card-line);
+    overflow:hidden; transition:box-shadow .15s ease;
   }
-  .chat-input input{
-    flex:1; border:1px solid var(--card-line); background:var(--bg); border-radius:20px; padding:11px 16px;
-    font-size:0.88rem; font-family:inherit; color:var(--navy); outline:none; transition:border-color .15s ease;
+  .vive-item.open{ box-shadow:var(--shadow-soft); }
+  .vive-header{
+    display:flex; align-items:center; gap:10px; width:100%; padding:13px 14px;
+    background:none; border:none; cursor:pointer; text-align:left;
   }
-  .chat-input input:focus{border-color:var(--red);}
-  .chat-input input::placeholder{color:#9AA6BE;}
-  .send-btn{
-    width:42px;height:42px; border-radius:50%; border:none; background:var(--red); color:white;
-    display:flex;align-items:center;justify-content:center; cursor:pointer; flex-shrink:0;
-    transition:transform .12s ease, background .15s ease; font-size:1.1rem;
+  .vive-header .vemoji{ font-size:1.1rem; flex-shrink:0; }
+  .vive-header .vtitle{ font-weight:700; font-size:0.86rem; color:var(--navy); flex:1; line-height:1.3; }
+  .vive-header .chev{ font-size:0.75rem; color:var(--ink-muted); transition:transform .2s ease; flex-shrink:0; }
+  .vive-item.open .chev{ transform:rotate(180deg); }
+  .vive-content{ max-height:0; overflow:hidden; transition:max-height .25s ease; }
+  .vive-item.open .vive-content{ max-height:600px; }
+  .vive-content-inner{ padding:0 14px 14px; }
+  .vive-content-inner p{ margin:0 0 6px; font-size:0.82rem; line-height:1.5; color:#3A4763; }
+  .vive-content-inner p:last-child{margin-bottom:0;}
+  .vive-content-inner strong{ color:var(--navy); }
+  .vive-badge{
+    display:inline-block; font-size:0.62rem; font-weight:800; text-transform:uppercase;
+    letter-spacing:.03em; padding:3px 8px; border-radius:20px; margin-bottom:6px;
   }
-  .send-btn:hover{background:var(--red-soft); transform:scale(1.06);}
-  .send-btn:active{transform:scale(.94);}
+  .vb-ok{background:#E4F8EC; color:#1C8A4B;}
+  .vb-warn{background:#FFF3D9; color:#B57500;}
+  .vb-info{background:#E9EEFF; color:#33499E;}
+  .vb-no{background:#FDE6E7; color:var(--red);}
 
-  ::-webkit-scrollbar{width:8px;}
-  ::-webkit-scrollbar-thumb{background:#D3DAE6; border-radius:10px;}
+  /* ---------- Financeiro / Calculator ---------- */
+  .calc-card{ padding:20px; }
+  .calc-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px; }
+  .calc-grid label{ font-size:0.82rem; font-weight:700; color:var(--navy); display:flex; flex-direction:column; gap:6px; }
+  .calc-grid input{
+    border:1px solid var(--card-line); background:var(--bg); border-radius:12px; padding:10px 12px;
+    font-size:0.92rem; font-family:inherit; color:var(--navy); outline:none;
+  }
+  .calc-grid input:focus{ border-color:var(--red); }
+  @media (max-width:700px){ .calc-grid{grid-template-columns:1fr;} }
+
+  .calc-table-wrap{ overflow-x:auto; margin-top:10px; border-radius:var(--radius-md); border:1px solid var(--card-line); }
+  table.calc-table{ width:100%; border-collapse:collapse; font-size:0.85rem; min-width:560px; }
+  table.calc-table th{
+    background:var(--bg); text-align:left; padding:10px 12px; font-size:0.72rem;
+    text-transform:uppercase; letter-spacing:.03em; color:var(--ink-muted); font-weight:800;
+  }
+  table.calc-table td{ padding:8px 12px; border-top:1px solid var(--card-line); }
+  table.calc-table input{
+    width:100%; border:1px solid var(--card-line); border-radius:8px; padding:6px 8px;
+    font-size:0.85rem; font-family:inherit; color:var(--navy);
+  }
+  table.calc-table .readonly-cell{ font-weight:700; color:var(--navy); }
+  .row-remove{
+    border:none; background:#FDE6E7; color:var(--red); width:26px; height:26px; border-radius:50%;
+    cursor:pointer; font-size:0.8rem; line-height:1;
+  }
+  .row-remove:hover{ background:#FBCFD2; }
+  .calc-add-btn{
+    margin-top:10px; border:2px dashed var(--card-line); background:transparent; color:var(--navy);
+    font-weight:700; font-size:0.85rem; padding:9px 16px; border-radius:20px; cursor:pointer;
+    transition:border-color .15s ease, color .15s ease;
+  }
+  .calc-add-btn:hover{ border-color:var(--red); color:var(--red); }
+  .calc-summary{
+    margin-top:16px; display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px;
+  }
+  .calc-summary .box{ background:var(--bg); border-radius:var(--radius-md); padding:12px 14px; }
+  .calc-summary .box .lbl{ font-size:0.7rem; font-weight:800; text-transform:uppercase; color:var(--ink-muted); }
+  .calc-summary .box .val{ font-size:1.15rem; font-weight:800; color:var(--navy); margin-top:2px; }
+  .calc-summary .box.highlight{ background:var(--navy); }
+  .calc-summary .box.highlight .lbl{ color:#B9C4E0; }
+  .calc-summary .box.highlight .val{ color:white; }
+  .calc-disclaimer{
+    margin-top:14px; font-size:0.78rem; color:var(--ink-muted); background:var(--bg);
+    padding:12px 14px; border-radius:var(--radius-md); line-height:1.5;
+  }
 
   a.link-chip{
     display:inline-block; margin-top:10px; font-size:0.82rem; font-weight:800; color:var(--red);
     text-decoration:none; background:#FDE6E7; padding:8px 14px; border-radius:20px;
   }
   a.link-chip:hover{background:#FBCFD2;}
+
+  ::-webkit-scrollbar{width:8px;}
+  ::-webkit-scrollbar-thumb{background:#D3DAE6; border-radius:10px;}
 </style>
 </head>
 <body>
@@ -256,11 +299,12 @@
       <button class="nav-item active" data-target="reforma"><span class="emoji">🛠️</span> Reforma e Obra <span class="count" id="cnt-reforma">0</span></button>
       <button class="nav-item" data-target="contrato"><span class="emoji">📄</span> O Contrato <span class="count" id="cnt-contrato">0</span></button>
       <button class="nav-item" data-target="condominio"><span class="emoji">🏢</span> O Condomínio</button>
+      <button class="nav-item" data-target="financeiro"><span class="emoji">💰</span> Financeiro</button>
       <button class="nav-item" data-target="duvidas"><span class="emoji">❓</span> Dúvidas Gerais <span class="count" id="cnt-duvidas">0</span></button>
     </nav>
 
     <div class="sidebar-foot">
-      As informações aqui são um resumo simplificado. 📚 O documento oficial é sempre o Memorial Descritivo e o seu contrato.
+      As informações aqui são um resumo simplificado. 📚 O documento oficial é sempre o Memorial Descritivo, seu contrato e o app Habitação Caixa.
     </div>
   </aside>
 
@@ -290,13 +334,13 @@
         </div>
       </div>
 
-      <div id="reformaList" class="section active" style="display:flex; flex-direction:column; gap:16px;"></div>
+      <div id="reformaList" style="display:flex; flex-direction:column; gap:16px;"></div>
       <div class="no-results" id="reformaEmpty" style="display:none;">😅 Não achamos nada com esse termo. Tenta buscar por outra palavra!</div>
 
       <div class="card">
         <span class="card-tag tag-info">💡 Dica de vizinho</span>
         <h3 class="card-title">Ficou com dúvida no meio da obra?</h3>
-        <p>Chama a gente ali no chat ao lado 👉 ou abre um chamado no app <strong>Tenda com Você</strong>. É sempre melhor perguntar antes de furar a parede! 😅</p>
+        <p>Abra um chamado no app <strong>Tenda com Você</strong> antes de furar a parede! É sempre melhor perguntar antes. 😅</p>
       </div>
     </section>
 
@@ -353,68 +397,6 @@
         <p>Ou seja: é possível que seu bloco já esteja entregue enquanto outro ainda está em obra ao lado — a rotina de segurança e acesso é organizada para que isso não atrapalhe seu dia a dia. 👷</p>
       </div>
 
-      <div class="subhead">💰 Entendendo a taxa de condomínio</div>
-
-      <div class="card">
-        <span class="card-tag tag-info">🧾 O que é</span>
-        <h3 class="card-title">Para que serve a taxa de condomínio?</h3>
-        <p>É o valor que todos os moradores pagam mensalmente para cobrir as despesas comuns do prédio: água e luz das áreas coletivas, salário da equipe (portaria, limpeza, manutenção), conservação das áreas de lazer, seguro predial e o fundo de reserva. 🧹💡</p>
-      </div>
-
-      <div class="grid-2">
-        <div class="card">
-          <span class="card-tag tag-warn">⏰ Quando começa</span>
-          <h3 class="card-title">A partir de quando eu pago?</h3>
-          <p>A cobrança da taxa de condomínio geralmente começa a partir da <strong>entrega das chaves</strong> da sua unidade, quando o condomínio passa a existir formalmente (mesmo antes da primeira assembleia, sob gestão provisória). 🔑</p>
-        </div>
-        <div class="card">
-          <span class="card-tag tag-info">⚖️ Como é dividido</span>
-          <h3 class="card-title">Fração ideal</h3>
-          <p>As despesas são rateadas entre todos os apês, proporcionalmente à <strong>fração ideal</strong> de cada unidade — geralmente parecida, já que as unidades têm metragens próximas. 📊</p>
-        </div>
-      </div>
-
-      <div class="card">
-        <span class="card-tag tag-info">🗂️ Antes da primeira assembleia</span>
-        <h3 class="card-title">Administradora provisória</h3>
-        <p>Assim que as primeiras chaves são entregues, uma <strong>administradora provisória</strong> cuida da gestão do dia a dia (portaria, limpeza, contas) até que os próprios moradores se reúnam e formalizem o condomínio na primeira assembleia. 📋</p>
-      </div>
-
-      <div class="subhead">🗳️ As assembleias do seu condomínio</div>
-
-      <div class="card">
-        <span class="card-tag tag-info">🏛️ A primeira reunião</span>
-        <h3 class="card-title">AGI — Assembleia Geral de Instalação</h3>
-        <p>É a primeira grande reunião dos moradores, marcando o "nascimento oficial" do condomínio. Nela, normalmente são discutidos e votados:</p>
-        <ul>
-          <li>📜 Aprovação da <strong>convenção de condomínio</strong> (as regras gerais).</li>
-          <li>📋 Aprovação do <strong>regimento interno</strong> (regras do dia a dia, como uso de áreas comuns).</li>
-          <li>🗳️ <strong>Eleição do síndico</strong> efetivo (ou confirmação do síndico provisório).</li>
-          <li>👥 Formação do <strong>conselho fiscal</strong>, que fiscaliza as contas.</li>
-          <li>🏢 Contratação (ou confirmação) da <strong>administradora</strong> definitiva.</li>
-          <li>💰 Aprovação do <strong>orçamento inicial</strong> e definição do fundo de reserva.</li>
-        </ul>
-      </div>
-
-      <div class="grid-2">
-        <div class="card">
-          <span class="card-tag tag-info">📅 Todo ano</span>
-          <h3 class="card-title">AGO — Assembleia Geral Ordinária</h3>
-          <p>Acontece anualmente. É quando o síndico presta contas do ano anterior, apresenta o orçamento do próximo e, se o mandato tiver terminado, uma nova eleição pode acontecer. 📊</p>
-        </div>
-        <div class="card">
-          <span class="card-tag tag-warn">🚨 Quando precisar</span>
-          <h3 class="card-title">AGE — Assembleia Geral Extraordinária</h3>
-          <p>Convocada fora do calendário normal para tratar de assuntos urgentes, como obras extras, mudanças de regras ou decisões que não podem esperar até a próxima AGO. ⚡</p>
-        </div>
-      </div>
-
-      <div class="card">
-        <span class="card-tag tag-ok">🛟 Reserva de emergência</span>
-        <h3 class="card-title">Fundo de reserva</h3>
-        <p>Parte da taxa de condomínio é guardada em um <strong>fundo de reserva</strong>, usado para emergências e manutenções futuras (como pintura da fachada ou troca de equipamentos). O percentual destinado é definido em assembleia. 🏦</p>
-      </div>
-
       <div class="subhead">🎉 Lazer e infraestrutura</div>
 
       <div class="card">
@@ -443,9 +425,185 @@
       </div>
 
       <div class="card">
-        <span class="card-tag tag-info">📋 Depois da AGI</span>
-        <h3 class="card-title">Regimento interno define a convivência</h3>
-        <p>Regras como horário de silêncio, uso de áreas de lazer, quantidade de pets por unidade e reservas de espaço são definidas no regimento interno, aprovado pelos próprios moradores. Participar das assembleias é a melhor forma de opinar sobre elas! 🙋</p>
+        <span class="card-tag tag-info">👉 Vida em comunidade</span>
+        <h3 class="card-title">Quer entender como funciona a vivência em condomínio?</h3>
+        <p>Taxa de condomínio, água e gás individual, assembleias, Airbnb, aluguel de vaga e muito mais — tudo isso está explicado na coluna <strong>🏘️ Vivência em Condomínio</strong>, ali no lado direito da tela. 👉</p>
+      </div>
+    </section>
+
+    <!-- FINANCEIRO -->
+    <section class="section" id="financeiro">
+      <div class="feed-header">
+        <h1>💰 Financeiro</h1>
+        <span class="kicker">Entendendo seu financiamento com a Caixa</span>
+      </div>
+
+      <div class="card hero-card">
+        <span class="card-tag">🏦 Parceria oficial</span>
+        <h3 class="card-title">O financiamento do seu apê é com a Caixa Econômica Federal</h3>
+        <p>A Tenda trabalha com a Caixa para viabilizar seu financiamento, inclusive dentro do Minha Casa, Minha Vida. Nesta aba, explicamos com calma as fases do pagamento e o que são aqueles "juros de obra" que aparecem na sua fatura antes da entrega das chaves. 😊</p>
+        <div class="stat-row">
+          <span class="stat-chip">🏗️ Pré-chaves</span>
+          <span class="stat-chip">🔑 Entrega das chaves</span>
+          <span class="stat-chip">🏠 Pós-chaves</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="card-tag tag-warn">⚠️ Antes de tudo</span>
+        <p>Este conteúdo é educativo e não substitui uma orientação financeira personalizada. Os valores e taxas do <strong>seu</strong> financiamento estão no seu contrato e no app <strong>Habitação Caixa</strong> — é sempre a fonte oficial e mais confiável para conferir extratos, boletos e saldo devedor. 📱</p>
+      </div>
+
+      <div class="subhead">🏗️ As duas fases do seu financiamento</div>
+
+      <div class="grid-2">
+        <div class="card">
+          <span class="card-tag tag-info">1️⃣ Fase da obra</span>
+          <h3 class="card-title">O que é pré-chaves</h3>
+          <p>É todo o período <strong>antes de você receber as chaves</strong>, enquanto o prédio ainda está sendo construído. Nessa fase, você paga um sinal e parcelas mensais (às vezes com reforços anuais, os "balões") direto para a construtora, além dos juros de obra quando o financiamento já foi contratado com a Caixa. 🏗️</p>
+          <p>Essas parcelas vão sendo corrigidas por um índice (geralmente o INCC, que acompanha o custo da construção civil) até a entrega do imóvel.</p>
+        </div>
+        <div class="card">
+          <span class="card-tag tag-ok">2️⃣ Fase de morar</span>
+          <h3 class="card-title">O que é pós-chaves</h3>
+          <p>Começa quando você <strong>recebe as chaves</strong> e o Habite-se é registrado. A partir daí, os juros de obra param e você passa a pagar as parcelas "de verdade" do financiamento bancário, seguindo a tabela combinada com a Caixa (geralmente SAC). 🔑</p>
+          <p>É nessa fase também que a correção passa a ser feita pela TR (Taxa Referencial), e não mais pelo INCC.</p>
+        </div>
+      </div>
+
+      <div class="subhead">🧾 Entendendo os juros de obra</div>
+
+      <div class="card">
+        <span class="card-tag tag-info">💡 O que são</span>
+        <h3 class="card-title">Juros de obra (ou "taxa de evolução de obra")</h3>
+        <p>Quando você financia um imóvel <strong>na planta</strong> pela Caixa, o banco não libera o dinheiro todo de uma vez para a construtora — ele libera aos poucos, conforme a obra evolui (um engenheiro da Caixa visita a obra mensalmente para conferir o andamento). 👷</p>
+        <p>Os juros de obra são cobrados justamente sobre o valor que <strong>já foi liberado</strong> até aquele momento. Por isso, o valor tende a crescer mês a mês, junto com o avanço da construção. 📈</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <span class="card-tag tag-warn">⚖️ É legal?</span>
+          <h3 class="card-title">Sim, desde que esteja no contrato</h3>
+          <p>A cobrança é legal e prevista no Código Civil, desde que exista cláusula clara no seu contrato de financiamento. Não existe uma fórmula única definida em lei — cada instituição pode calcular de um jeito, mas costuma haver um teto (frequentemente até 2% do valor do imóvel).</p>
+        </div>
+        <div class="card">
+          <span class="card-tag tag-no">🚫 Não pode com FGTS</span>
+          <h3 class="card-title">FGTS não paga juros de obra</h3>
+          <p>O saldo do FGTS só pode ser usado para entrada, amortização do saldo devedor ou parcelas do financiamento <strong>depois</strong> da entrega das chaves — nunca para pagar juros de obra durante a construção.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="card-tag tag-info">🔄 Não confunda</span>
+        <h3 class="card-title">Juros de obra ≠ parcela do financiamento</h3>
+        <p>Enquanto você paga juros de obra, o seu saldo devedor <strong>não diminui</strong> — ou seja, esse valor não amortiza a dívida, é só o "aluguel" do dinheiro que a Caixa já liberou para a construtora. A amortização de verdade só começa na fase pós-chaves, quando o financiamento tradicional entra em vigor. 🔁</p>
+      </div>
+
+      <div class="card">
+        <span class="card-tag tag-warn">⏰ Se atrasar</span>
+        <h3 class="card-title">O que acontece se eu não pagar os juros de obra?</h3>
+        <p>A cobrança pode ir para o seu CPF (negativação) e, em muitos contratos, a entrega das chaves fica <strong>condicionada</strong> à quitação desses valores. Se estiver com dificuldade, fale com a Caixa ou com a Tenda antes de acumular atraso — negociar cedo é sempre mais fácil. 🗣️</p>
+      </div>
+
+      <div class="subhead">🧮 Calculadora</div>
+
+      <div class="card calc-card">
+        <span class="card-tag tag-warn">🧮 Simulador educativo</span>
+        <h3 class="card-title">Simulador de Juros de Obra, mês a mês</h3>
+        <p>Preencha os campos abaixo com as informações do seu contrato e vá adicionando os meses conforme a Caixa libera os recursos para a construtora (esse percentual aparece no seu extrato ou no app Habitação Caixa). O simulador estima o valor aproximado de juros de obra em cada mês. 👇</p>
+
+        <div class="calc-grid">
+          <label>Valor total financiado aprovado pela Caixa (R$)
+            <input type="number" id="calcValorFinanciado" placeholder="Ex: 180000" min="0">
+          </label>
+          <label>Taxa de juros anual do seu contrato (%)
+            <input type="number" id="calcTaxaAnual" placeholder="Ex: 8" min="0" step="0.01">
+          </label>
+          <label>Quanto você já pagou de juros de obra até hoje (R$) — opcional
+            <input type="number" id="calcJaPago" placeholder="Ex: 950" min="0">
+          </label>
+          <label>Quantos meses você já vem pagando — opcional
+            <input type="number" id="calcMesesPagos" placeholder="Ex: 3" min="0">
+          </label>
+        </div>
+
+        <div class="subhead" style="margin-top:18px;">📅 Evolução da obra, mês a mês</div>
+        <div class="calc-table-wrap">
+          <table class="calc-table" id="calcTable">
+            <thead>
+              <tr>
+                <th>Mês</th>
+                <th>% liberado acumulado</th>
+                <th>Saldo liberado (R$)</th>
+                <th>Juros estimados no mês (R$)</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="calcTableBody"></tbody>
+          </table>
+        </div>
+        <button class="calc-add-btn" id="calcAddRow">➕ Adicionar mês</button>
+
+        <div class="calc-summary" id="calcSummary"></div>
+
+        <div class="calc-disclaimer">
+          📌 Este é um cálculo aproximado para fins educativos, baseado no modelo mais comum (juros simples sobre o saldo liberado). A Caixa pode aplicar metodologia, encargos e seguros adicionais (como TR, TA, MIP e DFI) que não entram nesta simulação. Sempre confira o valor oficial no app <strong>Habitação Caixa</strong> ou na sua agência.
+        </div>
+      </div>
+
+      <div class="subhead">📘 Glossário rápido</div>
+
+      <div class="grid-2">
+        <div class="card">
+          <span class="card-tag tag-info">🛡️ Seguro MIP</span>
+          <h3 class="card-title">Morte e Invalidez Permanente</h3>
+          <p>Protege sua família: se algo grave acontecer com você, o seguro quita o saldo devedor do financiamento junto à Caixa. É obrigatório em financiamentos habitacionais.</p>
+        </div>
+        <div class="card">
+          <span class="card-tag tag-info">🔥 Seguro DFI</span>
+          <h3 class="card-title">Danos Físicos ao Imóvel</h3>
+          <p>Cobre o imóvel financiado contra incêndio, explosão e outros danos estruturais graves, durante toda a vigência do financiamento.</p>
+        </div>
+        <div class="card">
+          <span class="card-tag tag-info">📊 INCC</span>
+          <h3 class="card-title">Índice Nacional de Custo da Construção</h3>
+          <p>Usado para corrigir as parcelas durante a fase de obra (pré-chaves), acompanhando o custo dos materiais e da mão de obra da construção civil.</p>
+        </div>
+        <div class="card">
+          <span class="card-tag tag-info">📉 TR</span>
+          <h3 class="card-title">Taxa Referencial</h3>
+          <p>Índice definido pelo Banco Central, usado para corrigir o saldo devedor do seu financiamento na fase pós-chaves, mês a mês, no dia do vencimento da parcela.</p>
+        </div>
+        <div class="card">
+          <span class="card-tag tag-info">🧮 Tabela SAC</span>
+          <h3 class="card-title">Sistema de Amortização Constante</h3>
+          <p>Modelo mais usado pela Caixa: a parte que amortiza a dívida é sempre igual, e como os juros diminuem ao longo do tempo, a parcela total vai ficando menor mês a mês.</p>
+        </div>
+        <div class="card">
+          <span class="card-tag tag-info">🏠 Habite-se</span>
+          <h3 class="card-title">Documento que "libera" o prédio</h3>
+          <p>Certidão da prefeitura que atesta que a construção está pronta e segue as normas. É a partir dele que os juros de obra param e o financiamento tradicional começa.</p>
+        </div>
+      </div>
+
+      <div class="subhead">🎒 Outras coisas boas de saber</div>
+
+      <div class="card">
+        <span class="card-tag tag-info">📑 Guarde tudo</span>
+        <h3 class="card-title">Comprovantes de pagamento são seus melhores amigos</h3>
+        <p>Guarde todos os boletos pagos e comprovantes durante a fase de obra. Eles servem de prova em caso de qualquer divergência de valores lá na frente. 🗂️</p>
+      </div>
+
+      <div class="card">
+        <span class="card-tag tag-warn">🏛️ Novo imposto no radar</span>
+        <h3 class="card-title">IPTU passa a ser sua responsabilidade</h3>
+        <p>Assim que você recebe as chaves, o IPTU (Imposto Predial e Territorial Urbano) do seu apê passa a ser de sua responsabilidade, cobrado pela prefeitura de Salvador — é separado da taxa de condomínio e do financiamento. 🧾</p>
+      </div>
+
+      <div class="card">
+        <span class="card-tag tag-info">📲 App Habitação Caixa</span>
+        <h3 class="card-title">Seu canal oficial com o banco</h3>
+        <p>Pelo app, você acompanha prestações em aberto, emite boletos, simula amortização ou quitação antecipada, solicita uso do FGTS e acompanha a evolução da obra do seu imóvel. Vale a pena baixar assim que assinar o contrato. 📱</p>
       </div>
     </section>
 
@@ -463,30 +621,19 @@
       <div class="search-meta" id="metaDuvidas"></div>
 
       <div id="duvidasList" style="display:flex; flex-direction:column; gap:14px;"></div>
-      <div class="no-results" id="duvidasEmpty" style="display:none;">😅 Não achamos nada com esse termo. Tenta buscar por outra palavra, ou chama o Tenda Bot no chat!</div>
+      <div class="no-results" id="duvidasEmpty" style="display:none;">😅 Não achamos nada com esse termo. Tenta buscar por outra palavra!</div>
     </section>
 
   </main>
 
-  <!-- ============ RIGHT: CHAT ============ -->
+  <!-- ============ RIGHT: VIVÊNCIA EM CONDOMÍNIO ============ -->
   <aside class="col sticky">
-    <div class="chat">
-      <div class="chat-head">
-        <div class="bot-avatar">🤖</div>
-        <div>
-          <div class="title">Tenda Bot</div>
-          <div class="status">online agora</div>
-        </div>
+    <div class="vive">
+      <div class="vive-head">
+        <div class="title">🏘️ Vivência em Condomínio</div>
+        <div class="sub">Tudo que todo morador de primeira viagem precisa saber</div>
       </div>
-
-      <div class="chat-body" id="chatBody">
-        <div class="bubble bot">Oi, vizinho! 👋 Sou o Tenda Bot. Pode perguntar o que quiser sobre seu apê, reforma ou o condomínio! 😄</div>
-      </div>
-
-      <div class="chat-input">
-        <input type="text" id="chatInput" placeholder="Digite sua dúvida... 💬" autocomplete="off">
-        <button class="send-btn" id="sendBtn" aria-label="Enviar mensagem">➤</button>
-      </div>
+      <div class="vive-body" id="viveList"></div>
     </div>
   </aside>
 
@@ -545,9 +692,9 @@ const contratoData = [
   {clause:'Cláusula 4.3', title:'Aviso de conclusão da obra', text:'Quando a obra terminar, você recebe uma comunicação oficial para agendar a vistoria e retirada das chaves. 📩'},
   {clause:'Cláusula 4.4', title:'Casos de força maior', text:'Eventos fora do controle da construtora podem justificar prazos adicionais, sempre informados a você. ⚠️'},
   {clause:'Cláusula 5.1 / Anexo III', title:'Onde está o valor do meu contrato', text:'Todos os valores, parcelas e formas de pagamento ficam detalhados no Quadro Resumo (Anexo III), não no corpo principal do contrato. 📑'},
-  {clause:'Cláusula 5.2', title:'Correção monetária durante a obra', text:'Enquanto o prédio está em construção, normalmente as parcelas são corrigidas por um índice específico. Depois da entrega, o índice pode mudar. 📈'},
+  {clause:'Cláusula 5.2', title:'Correção monetária durante a obra', text:'Enquanto o prédio está em construção, normalmente as parcelas são corrigidas por um índice específico (o INCC). Depois da entrega, o índice muda para a TR. 📈'},
   {clause:'Cláusula 5.3', title:'Forma de pagamento das parcelas', text:'Explica como e onde pagar cada parcela e o que fazer em caso de atraso. 💳'},
-  {clause:'Cláusula 6.1', title:'Financiamento bancário', text:'Se parte do seu apê é financiada, essa cláusula trata da relação entre você, a construtora e o banco financiador. 🏦'},
+  {clause:'Cláusula 6.1', title:'Financiamento bancário', text:'Se parte do seu apê é financiada pela Caixa, essa cláusula trata da relação entre você, a construtora e o banco financiador. 🏦'},
   {clause:'Cláusula 6.2', title:'Uso do FGTS', text:'Se você usa FGTS na compra, aqui estão as condições para liberação do saldo junto à Caixa. 💼'},
   {clause:'Cláusula 6.3', title:'Subsídio Minha Casa Minha Vida', text:'Caso seu contrato tenha subsídio do programa, as condições de elegibilidade ficam registradas nessa cláusula. 🏡'},
   {clause:'Cláusula 6.4', title:'Aprovação de crédito prévia', text:'A assinatura do contrato pode estar condicionada à aprovação do seu crédito pelo banco antes da liberação final. ✅'},
@@ -558,7 +705,7 @@ const contratoData = [
   {clause:'Cláusula 8.3', title:'Vagas para moto', text:'Se sua unidade tiver vaga de moto, ela também é registrada nessa cláusula com sua localização. 🏍️'},
   {clause:'Cláusula 9.1', title:'Matrícula individual do seu apê', text:'Depois de pronto, o prédio é dividido em matrículas individuais no cartório — cada apê ganha a sua própria. 📜'},
   {clause:'Cláusula 9.2', title:'Por que isso importa', text:'A matrícula individual é o que permite registrar seu financiamento e, futuramente, vender ou herdar o imóvel. 🔑'},
-  {clause:'Cláusula 10.1', title:'Quando a taxa de condomínio começa', text:'A cobrança normalmente começa a partir da entrega das chaves da sua unidade — veja mais detalhes na aba 🏢 O Condomínio.'},
+  {clause:'Cláusula 10.1', title:'Quando a taxa de condomínio começa', text:'A cobrança normalmente começa a partir da entrega das chaves da sua unidade — veja mais detalhes na coluna 🏘️ Vivência em Condomínio.'},
   {clause:'Cláusula 10.2', title:'Administradora provisória', text:'Até a Assembleia Geral de Instalação (AGI), uma administradora provisória cuida da gestão do condomínio. 🗂️'},
   {clause:'Cláusula 10.3', title:'Rateio por fração ideal', text:'As despesas do condomínio são divididas entre todos os apês, proporcionalmente à fração ideal de cada unidade. ⚖️'},
   {clause:'Cláusula 11.1', title:'Vistoria antes de receber as chaves', text:'Antes de assinar o termo de entrega, você faz uma vistoria conjunta no apê para conferir se está tudo certo. 🔍'},
@@ -677,25 +824,74 @@ const duvidasData = [
   {cat:'💰 Financeiro do condomínio', q:'O que acontece se eu atrasar a taxa de condomínio?', a:'Pode haver cobrança de encargos, conforme definido na convenção do condomínio — evite atrasos!'},
   {cat:'💰 Financeiro do condomínio', q:'Existe desconto para pagamento em dia?', a:'Depende da política definida pela assembleia do condomínio — confira com a administradora.'},
   {cat:'💰 Financeiro do condomínio', q:'Como acompanho as contas do condomínio?', a:'As prestações de contas são apresentadas na Assembleia Geral Ordinária (AGO), anualmente.'},
-  {cat:'🏡 Dia a dia', q:'Posso trocar a fechadura da minha porta?', a:'Sim, desde que a porta corta-fogo (se houver) mantenha o padrão de segurança exigido.'},
-  {cat:'🏡 Dia a dia', q:'Posso pintar minha porta de entrada de outra cor?', a:'Normalmente as portas voltadas para área comum seguem um padrão — confirme com a administradora.'},
-  {cat:'🏡 Dia a dia', q:'Posso colocar câmera na porta do meu apê?', a:'Consulte o regimento interno sobre instalação de câmeras voltadas para áreas comuns, por questão de privacidade dos vizinhos.'},
-  {cat:'🏡 Dia a dia', q:'Meu apê é PCD-adaptável, posso pedir adaptações extras?', a:'Fale com a administradora sobre adaptações complementares dentro das regras do condomínio.'},
-  {cat:'🏡 Dia a dia', q:'Posso guardar bicicleta no meu apê?', a:'Sim, mas o condomínio também oferece bicicletário nas áreas comuns para facilitar.'},
-  {cat:'🏡 Dia a dia', q:'Como funciona a coleta seletiva de lixo?', a:'O condomínio conta com local específico para separação de recicláveis — siga a sinalização.'},
-  {cat:'🏡 Dia a dia', q:'Posso ter horta na minha varanda?', a:'Pequenas plantas geralmente são permitidas; culturas maiores podem seguir regras específicas do regimento interno.'},
-  {cat:'🏡 Dia a dia', q:'Existe restrição de peso para vasos grandes na varanda?', a:'Sim! Respeite sempre o limite de carga da estrutura (150 kg/m²) mesmo em objetos decorativos.'},
-  {cat:'🏡 Dia a dia', q:'Posso usar o Espaço Oficina para uso comercial?', a:'Não, ele é pensado para pequenos reparos pessoais dos moradores, sem fins comerciais.'},
-  {cat:'🏡 Dia a dia', q:'Quem cuida da manutenção das áreas de lazer?', a:'A manutenção das áreas comuns é de responsabilidade do condomínio, custeada pela taxa mensal.'},
+  {cat:'🏦 Financiamento', q:'O que é o app Habitação Caixa?', a:'É o canal oficial para acompanhar seu financiamento: boletos, saldo, uso de FGTS e evolução da obra, direto pelo celular.'},
+  {cat:'🏦 Financiamento', q:'Posso usar FGTS para pagar juros de obra?', a:'Não. O FGTS só pode ser usado para entrada, amortização ou parcelas depois da entrega das chaves.'},
+  {cat:'🏦 Financiamento', q:'Os juros de obra somam com a parcela do financiamento?', a:'Não, eles não acontecem ao mesmo tempo. Os juros de obra terminam quando a fase pós-chaves começa.'},
+  {cat:'🏠 Dia a dia', q:'Posso trocar a fechadura da minha porta?', a:'Sim, desde que a porta corta-fogo (se houver) mantenha o padrão de segurança exigido.'},
+  {cat:'🏠 Dia a dia', q:'Posso pintar minha porta de entrada de outra cor?', a:'Normalmente as portas voltadas para área comum seguem um padrão — confirme com a administradora.'},
+  {cat:'🏠 Dia a dia', q:'Posso colocar câmera na porta do meu apê?', a:'Consulte o regimento interno sobre instalação de câmeras voltadas para áreas comuns, por questão de privacidade dos vizinhos.'},
+  {cat:'🏠 Dia a dia', q:'Meu apê é PCD-adaptável, posso pedir adaptações extras?', a:'Fale com a administradora sobre adaptações complementares dentro das regras do condomínio.'},
+  {cat:'🏠 Dia a dia', q:'Posso guardar bicicleta no meu apê?', a:'Sim, mas o condomínio também oferece bicicletário nas áreas comuns para facilitar.'},
+  {cat:'🏠 Dia a dia', q:'Como funciona a coleta seletiva de lixo?', a:'O condomínio conta com local específico para separação de recicláveis — siga a sinalização.'},
+  {cat:'🏠 Dia a dia', q:'Posso ter horta na minha varanda?', a:'Pequenas plantas geralmente são permitidas; culturas maiores podem seguir regras específicas do regimento interno.'},
+  {cat:'🏠 Dia a dia', q:'Existe restrição de peso para vasos grandes na varanda?', a:'Sim! Respeite sempre o limite de carga da estrutura (150 kg/m²) mesmo em objetos decorativos.'},
+  {cat:'🏠 Dia a dia', q:'Posso usar o Espaço Oficina para uso comercial?', a:'Não, ele é pensado para pequenos reparos pessoais dos moradores, sem fins comerciais.'},
+  {cat:'🏠 Dia a dia', q:'Quem cuida da manutenção das áreas de lazer?', a:'A manutenção das áreas comuns é de responsabilidade do condomínio, custeada pela taxa mensal.'},
   {cat:'🗳️ Participação', q:'Posso sugerir melhorias para as áreas comuns?', a:'Sim! Leve sua sugestão para discussão na próxima Assembleia Geral.'},
   {cat:'🗳️ Participação', q:'Como faço parte do conselho fiscal do condomínio?', a:'Basta se candidatar durante a Assembleia Geral de Instalação (AGI) ou Ordinária (AGO).'},
   {cat:'🗳️ Participação', q:'Posso registrar reclamações formais sobre o condomínio?', a:'Sim, pelo canal oficial com a administradora ou diretamente na assembleia.'},
   {cat:'🗳️ Participação', q:'Quero saber mais sobre a fase de entrega do meu bloco.', a:'Acompanhe as comunicações oficiais da Tenda e da administradora sobre o cronograma de fases.'},
-  {cat:'💬 Ainda com dúvida?', q:'Não achei minha resposta aqui.', a:'Chama o Tenda Bot ali no chat ao lado! Ele te ajuda ou te direciona pro canal certo.'}
+  {cat:'💬 Ainda com dúvida?', q:'Não achei minha resposta aqui.', a:'Fale com a portaria, a administradora, ou abra um chamado no app Tenda com Você. Eles vão te ajudar! 🙌'}
 ];
 
 /* =====================================================================
-   RENDER HELPERS
+   DATA: VIVÊNCIA EM CONDOMÍNIO (coluna direita)
+===================================================================== */
+const viveData = [
+  {emoji:'💰', badge:'vb-info', badgeText:'Financeiro', title:'Taxa de condomínio: para que serve?',
+   body:['A taxa cobre despesas comuns: água e luz das áreas coletivas, salários da equipe, manutenção, conservação das áreas de lazer, seguro predial e o fundo de reserva.',
+         'O valor é dividido entre os apês pela <strong>fração ideal</strong> de cada unidade — geralmente parecida entre elas.',
+         'Ela costuma começar a ser cobrada a partir da <strong>entrega das chaves</strong> da sua unidade.']},
+  {emoji:'🚰', badge:'vb-ok', badgeText:'Água e gás', title:'Consumo é coletivo ou individual?',
+   body:['O Encanto Piatã já nasce com <strong>individualização de água</strong>: cada apê tem seu próprio hidrômetro e paga só o que consome, além de itens economizadores (torneiras com arejador, bacia de duplo acionamento).',
+         'Isso é diferente do modelo antigo, em que a conta de água era dividida igualmente entre todos, mesmo quem gastasse menos.',
+         'Para o <strong>gás</strong>, a forma de medição (individual ou coletiva) segue o que está no memorial descritivo do seu bloco — vale confirmar com a administradora se o seu já tem medição individual.',
+         'Se o condomínio quiser <strong>implementar</strong> individualização em algo que hoje é coletivo, isso passa por: aprovação em assembleia, contratação de empresa especializada para instalar os medidores, e depois leitura mensal para cobrança pelo consumo real de cada um. 🔧']},
+  {emoji:'🤝', badge:'vb-warn', badgeText:'Convivência', title:'Regras de convivência: quais são?',
+   body:['As regras do dia a dia ficam no <strong>regimento interno</strong>, aprovado pelos próprios moradores: horário de silêncio, uso de áreas de lazer, quantidade de pets, uso de vagas, entre outros.',
+         'Elas valem para <strong>todo mundo</strong>, inclusive locatários — o proprietário responde caso o inquilino descumpra.',
+         'Descumprir o regimento pode gerar advertência e, em casos de reincidência, multa aplicada pelo síndico.']},
+  {emoji:'🗳️', badge:'vb-info', badgeText:'Assembleias', title:'Como e com que frequência acontecem?',
+   body:['<strong>AGI</strong> (Assembleia Geral de Instalação): a primeira, que "oficializa" o condomínio.',
+         '<strong>AGO</strong> (Assembleia Geral Ordinária): acontece uma vez por ano, sempre na mesma época, para prestar contas e aprovar o orçamento seguinte.',
+         '<strong>AGE</strong> (Assembleia Geral Extraordinária): convocada sempre que surge um assunto urgente fora do calendário normal.',
+         'A convocação é feita por edital, com antecedência mínima definida na convenção (geralmente alguns dias antes). 📬']},
+  {emoji:'✅', badge:'vb-info', badgeText:'Assembleias', title:'O que deve ser votado em assembleia?',
+   body:['Prestação de contas e aprovação do orçamento anual.',
+         'Eleição do síndico e do conselho fiscal.',
+         'Mudanças na convenção de condomínio ou no regimento interno (exigem quórum qualificado, geralmente 2/3 dos condôminos).',
+         'Obras extraordinárias, contratações relevantes e uso do fundo de reserva.',
+         'Autorizações especiais, como locação de vagas para terceiros ou regras sobre Airbnb.']},
+  {emoji:'🏖️', badge:'vb-warn', badgeText:'Airbnb', title:'Posso alugar meu apê por temporada (Airbnb)?',
+   body:['Depende da <strong>convenção de condomínio</strong>. O STJ já decidiu que um condomínio residencial pode proibir locações de curta temporada, mas isso precisa estar previsto expressamente na convenção.',
+         'Se não houver proibição clara, a prática pode ser permitida — mas o tema costuma gerar debate por causa da alta rotatividade de pessoas.',
+         'Para proibir (ou liberar) formalmente, normalmente é preciso alterar a convenção com aprovação de <strong>2/3 dos condôminos</strong> em assembleia. Vale a pena participar da discussão! 🗣️']},
+  {emoji:'🚗', badge:'vb-no', badgeText:'Vagas', title:'Posso alugar minha vaga de garagem?',
+   body:['Para <strong>outro morador do condomínio</strong>, alugar geralmente é permitido, seguindo as regras internas.',
+         'Para <strong>pessoas de fora do condomínio</strong>, a lei (Código Civil, art. 1.331) só permite se a convenção autorizar expressamente — e essa autorização também exige aprovação de 2/3 dos condôminos em assembleia.',
+         'Sem essa autorização, alugar a vaga para estranhos é considerado irregular e pode gerar notificação e multa. 🚫']},
+  {emoji:'📊', badge:'vb-info', badgeText:'Gestão', title:'Como se define o orçamento e a parte fiscal?',
+   body:['O <strong>síndico</strong>, junto com a administradora, monta a proposta de orçamento anual (previsão de receitas e despesas).',
+         'O <strong>conselho fiscal</strong>, formado por moradores eleitos, analisa e fiscaliza as contas antes de irem para votação.',
+         'A proposta é apresentada e aprovada (ou ajustada) na <strong>AGO</strong>, junto com a prestação de contas do ano anterior.',
+         'Despesas extras fora do orçamento aprovado — como um evento maior ou uma reforma nas áreas comuns — normalmente precisam passar por nova aprovação em assembleia (AGE). 🎉']},
+  {emoji:'🗂️', badge:'vb-info', badgeText:'No começo', title:'Quem cuida do condomínio antes da AGI?',
+   body:['Assim que as primeiras chaves são entregues, uma <strong>administradora provisória</strong> cuida da rotina (portaria, limpeza, contas) até a primeira assembleia formal.',
+         'É essa fase que também define o <strong>fundo de reserva</strong> inicial, guardado para emergências e manutenções futuras.']}
+];
+
+/* =====================================================================
+   RENDER HELPERS: Reforma / Contrato / Dúvidas
 ===================================================================== */
 function normalize(str){
   return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
@@ -749,10 +945,47 @@ function renderDuvidas(list){
   });
 }
 
+function renderVive(){
+  const el = document.getElementById('viveList');
+  el.innerHTML = '';
+  viveData.forEach((item, idx) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'vive-item';
+    const bodyHtml = item.body.map(p => `<p>${p}</p>`).join('');
+    wrap.innerHTML = `
+      <button class="vive-header" data-idx="${idx}">
+        <span class="vemoji">${item.emoji}</span>
+        <span class="vtitle">${item.title}</span>
+        <span class="chev">▼</span>
+      </button>
+      <div class="vive-content">
+        <div class="vive-content-inner">
+          <span class="vive-badge ${item.badge}">${item.badgeText}</span>
+          ${bodyHtml}
+        </div>
+      </div>`;
+    el.appendChild(wrap);
+  });
+
+  el.querySelectorAll('.vive-header').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.vive-item');
+      const wasOpen = item.classList.contains('open');
+      el.querySelectorAll('.vive-item').forEach(i => i.classList.remove('open'));
+      if(!wasOpen) item.classList.add('open');
+    });
+  });
+
+  // open the first item by default
+  const first = el.querySelector('.vive-item');
+  if(first) first.classList.add('open');
+}
+
 /* initial render */
 renderReforma(reformaData);
 renderContrato(contratoData);
 renderDuvidas(duvidasData);
+renderVive();
 
 document.getElementById('cnt-reforma').textContent = reformaData.length;
 document.getElementById('cnt-contrato').textContent = contratoData.length;
@@ -809,61 +1042,120 @@ navItems.forEach(btn => {
 });
 
 /* =====================================================================
-   Mock Chat
+   Calculadora de Juros de Obra
 ===================================================================== */
-const chatBody = document.getElementById('chatBody');
-const chatInput = document.getElementById('chatInput');
-const sendBtn = document.getElementById('sendBtn');
+let calcRows = [];
+let calcRowId = 0;
 
-const botReplies = [
-  "Que legal! Entendi sua dúvida 😄 Se for algo mais complexo, abre um chamado no app Tenda com Você que a equipe te ajuda rapidinho! 📱",
-  "Boa pergunta! 🤔 Dá uma olhadinha no feed central aqui do lado, acho que tem a resposta certinha por lá! 🛠️",
-  "Anotado por aqui! ✍️ Enquanto isso, você já viu os detalhes do seu contrato na aba 📄 O Contrato?",
-  "Show! 🎉 Isso costuma estar explicado direitinho na aba do Condomínio 🏢 — dá uma espiada lá!",
-  "Entendi! 💙 Pra assuntos mais específicos do seu apê, o time de atendimento consegue te dar uma resposta certeira. Bora abrir um chamado? 🙌"
-];
-
-function scrollChatToBottom(){ chatBody.scrollTop = chatBody.scrollHeight; }
-
-function addBubble(text, sender){
-  const bubble = document.createElement('div');
-  bubble.className = 'bubble ' + sender;
-  bubble.textContent = text;
-  chatBody.appendChild(bubble);
-  scrollChatToBottom();
+function formatBRL(value){
+  if(isNaN(value)) value = 0;
+  return value.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
 }
 
-function showTyping(){
-  const typing = document.createElement('div');
-  typing.className = 'bubble typing';
-  typing.id = 'typingIndicator';
-  typing.innerHTML = '<span></span><span></span><span></span>';
-  chatBody.appendChild(typing);
-  scrollChatToBottom();
+function addCalcRow(){
+  calcRowId++;
+  const nextMonthLabel = 'Mês ' + calcRows.length + 1;
+  calcRows.push({ id: calcRowId, label: 'Mês ' + (calcRows.length + 1), pct: '' });
+  renderCalcTable();
 }
 
-function removeTyping(){
-  const typing = document.getElementById('typingIndicator');
-  if (typing) typing.remove();
+function removeCalcRow(id){
+  calcRows = calcRows.filter(r => r.id !== id);
+  renderCalcTable();
 }
 
-function sendMessage(){
-  const text = chatInput.value.trim();
-  if (!text) return;
-  addBubble(text, 'user');
-  chatInput.value = '';
-  showTyping();
-  setTimeout(() => {
-    removeTyping();
-    const reply = botReplies[Math.floor(Math.random() * botReplies.length)];
-    addBubble(reply, 'bot');
-  }, 1500);
+function renderCalcTable(){
+  const tbody = document.getElementById('calcTableBody');
+  tbody.innerHTML = '';
+
+  const valorFinanciado = parseFloat(document.getElementById('calcValorFinanciado').value) || 0;
+  const taxaAnual = parseFloat(document.getElementById('calcTaxaAnual').value) || 0;
+  const taxaMensal = taxaAnual / 12 / 100;
+
+  let totalJuros = 0;
+  let ultimoSaldo = 0;
+
+  calcRows.forEach(row => {
+    const pct = parseFloat(row.pct) || 0;
+    const saldoLiberado = valorFinanciado * (pct / 100);
+    const jurosMes = saldoLiberado * taxaMensal;
+    totalJuros += jurosMes;
+    ultimoSaldo = saldoLiberado;
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input type="text" value="${row.label}" data-id="${row.id}" data-field="label"></td>
+      <td><input type="number" min="0" max="100" step="0.1" value="${row.pct}" data-id="${row.id}" data-field="pct" placeholder="Ex: 25"></td>
+      <td class="readonly-cell">R$ ${formatBRL(saldoLiberado)}</td>
+      <td class="readonly-cell">R$ ${formatBRL(jurosMes)}</td>
+      <td><button class="row-remove" data-remove="${row.id}" title="Remover mês">✕</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  tbody.querySelectorAll('input').forEach(input => {
+    input.addEventListener('input', (e) => {
+      const id = parseInt(e.target.getAttribute('data-id'));
+      const field = e.target.getAttribute('data-field');
+      const row = calcRows.find(r => r.id === id);
+      if(row) row[field] = e.target.value;
+      renderCalcTable();
+    });
+  });
+
+  tbody.querySelectorAll('.row-remove').forEach(btn => {
+    btn.addEventListener('click', () => {
+      removeCalcRow(parseInt(btn.getAttribute('data-remove')));
+    });
+  });
+
+  renderCalcSummary(totalJuros, ultimoSaldo);
 }
 
-sendBtn.addEventListener('click', sendMessage);
-chatInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') { e.preventDefault(); sendMessage(); }
+function renderCalcSummary(totalJuros, ultimoSaldo){
+  const jaPago = parseFloat(document.getElementById('calcJaPago').value) || 0;
+  const mesesPagos = parseFloat(document.getElementById('calcMesesPagos').value) || 0;
+  const summary = document.getElementById('calcSummary');
+
+  let boxes = `
+    <div class="box highlight">
+      <div class="lbl">Total estimado de juros de obra</div>
+      <div class="val">R$ ${formatBRL(totalJuros)}</div>
+    </div>
+    <div class="box">
+      <div class="lbl">Meses simulados</div>
+      <div class="val">${calcRows.length}</div>
+    </div>
+    <div class="box">
+      <div class="lbl">Saldo liberado (último mês)</div>
+      <div class="val">R$ ${formatBRL(ultimoSaldo)}</div>
+    </div>
+  `;
+
+  if(jaPago > 0){
+    const diff = totalJuros - jaPago;
+    const diffLabel = diff >= 0 ? 'Estimativa acima do que você pagou' : 'Estimativa abaixo do que você pagou';
+    boxes += `
+    <div class="box">
+      <div class="lbl">Você já pagou</div>
+      <div class="val">R$ ${formatBRL(jaPago)}${mesesPagos > 0 ? ' em ' + mesesPagos + ' meses' : ''}</div>
+    </div>
+    <div class="box">
+      <div class="lbl">${diffLabel}</div>
+      <div class="val">R$ ${formatBRL(Math.abs(diff))}</div>
+    </div>`;
+  }
+
+  summary.innerHTML = boxes;
+}
+
+document.getElementById('calcAddRow').addEventListener('click', addCalcRow);
+['calcValorFinanciado','calcTaxaAnual','calcJaPago','calcMesesPagos'].forEach(id => {
+  document.getElementById(id).addEventListener('input', renderCalcTable);
 });
+
+// seed with 3 example rows
+addCalcRow(); addCalcRow(); addCalcRow();
 </script>
 
 </body>
