@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tenda & Você | Portal do Morador</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:ital,wght@0,400;0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0F1C3F;
+    --navy-soft:#1B2C57;
+    --red:#E3000F;
+    --red-soft:#FF3B47;
+    --white:#FFFFFF;
+    --bg:#F4F6F8;
+    --card-line:#E7EBF1;
+    --ink-muted:#5C6A82;
+    --yellow:#FFC72C;
+    --radius-xl:24px;
+    --radius-lg:18px;
+    --radius-md:14px;
+    --shadow-soft:0 8px 24px rgba(15,28,63,0.08);
+    --shadow-pop:0 14px 34px rgba(15,28,63,0.14);
+    font-size:16px;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--bg);
+    font-family:'Nunito Sans', sans-serif;
+    color:var(--navy);
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4,.brand,.nav-label,.card-title{
+    font-family:'Baloo 2', sans-serif;
+  }
+  button{font-family:inherit;}
+
+  /* ---------- App shell ---------- */
+  .app{
+    display:grid;
+    grid-template-columns:280px minmax(0,1fr) 320px;
+    gap:20px;
+    max-width:1400px;
+    margin:0 auto;
+    padding:20px;
+    align-items:start;
+  }
+  .col{
+    background:var(--white);
+    border-radius:var(--radius-xl);
+    box-shadow:var(--shadow-soft);
+  }
+  .sticky{
+    position:sticky;
+    top:20px;
+    max-height:calc(100vh - 40px);
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* ---------- Sidebar ---------- */
+  .sidebar{ padding:22px 16px 16px; }
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    font-weight:800; font-size:1.3rem; color:var(--navy);
+    padding:0 6px 18px;
+  }
+  .brand .dot{
+    width:38px;height:38px; background:var(--red); border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    color:white;font-size:1.2rem; box-shadow:var(--shadow-soft); flex-shrink:0;
+  }
+  .profile{
+    display:flex; align-items:center; gap:12px;
+    background:linear-gradient(135deg, var(--navy), var(--navy-soft));
+    border-radius:var(--radius-lg); padding:16px; color:white; margin-bottom:22px;
+  }
+  .avatar{
+    width:46px;height:46px; border-radius:50%; background:var(--yellow);
+    display:flex;align-items:center;justify-content:center; font-size:1.3rem;
+    flex-shrink:0; box-shadow:0 4px 10px rgba(0,0,0,0.2);
+  }
+  .profile .hi{font-weight:700;font-size:1rem;line-height:1.2;}
+  .profile .sub{font-size:0.78rem;opacity:0.8;font-weight:600;}
+
+  nav.menu{ display:flex; flex-direction:column; gap:8px; }
+  .nav-item{
+    display:flex; align-items:center; gap:12px;
+    padding:13px 14px; border-radius:var(--radius-md); border:none;
+    background:transparent; color:var(--navy); font-weight:700; font-size:0.95rem;
+    text-align:left; cursor:pointer;
+    transition:background .18s ease, color .18s ease, transform .12s ease;
+  }
+  .nav-item .emoji{font-size:1.25rem;}
+  .nav-item .count{
+    margin-left:auto; font-size:0.68rem; font-weight:800;
+    background:#EEF1F6; color:var(--ink-muted); padding:2px 8px; border-radius:20px;
+  }
+  .nav-item.active .count{ background:rgba(255,255,255,0.25); color:white; }
+  .nav-item:hover{background:#F1F3F8;transform:translateX(2px);}
+  .nav-item.active{ background:var(--red); color:white; box-shadow:var(--shadow-soft); }
+  .sidebar-foot{ margin-top:auto; padding:16px 6px 4px; font-size:0.72rem; color:var(--ink-muted); line-height:1.5; }
+
+  /* ---------- Center feed ---------- */
+  .feed{ padding:24px 26px 40px; min-height:70vh; }
+  .feed-header{
+    display:flex; align-items:baseline; justify-content:space-between; margin-bottom:14px; gap:10px; flex-wrap:wrap;
+  }
+  .feed-header h1{ margin:0; font-size:1.5rem; font-weight:800; }
+  .feed-header .kicker{ font-size:0.8rem; color:var(--ink-muted); font-weight:700; }
+  .section{display:none;}
+  .section.active{ display:flex; flex-direction:column; gap:16px; animation:fadeIn .35s ease; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+
+  /* search bar */
+  .search-wrap{ position:relative; margin-bottom:4px; }
+  .search-wrap input{
+    width:100%; border:1px solid var(--card-line); background:var(--bg);
+    border-radius:20px; padding:13px 44px 13px 18px; font-size:0.95rem;
+    font-family:inherit; color:var(--navy); outline:none; transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  .search-wrap input:focus{ border-color:var(--red); box-shadow:0 0 0 3px rgba(227,0,15,0.08); }
+  .search-wrap input::placeholder{ color:#9AA6BE; }
+  .search-wrap .icon{
+    position:absolute; right:16px; top:50%; transform:translateY(-50%);
+    font-size:1rem; color:var(--ink-muted); pointer-events:none;
+  }
+  .search-meta{ font-size:0.78rem; color:var(--ink-muted); font-weight:700; margin:2px 2px 6px; }
+  .no-results{
+    text-align:center; padding:30px 10px; color:var(--ink-muted); font-weight:700;
+    background:var(--bg); border-radius:var(--radius-lg);
+  }
+
+  .card{
+    border:1px solid var(--card-line); border-radius:var(--radius-lg); padding:18px 20px;
+    background:var(--white); transition:box-shadow .2s ease, transform .2s ease;
+  }
+  .card:hover{box-shadow:var(--shadow-pop); transform:translateY(-2px);}
+  .card-tag{
+    display:inline-flex; align-items:center; gap:6px; font-size:0.72rem; font-weight:800;
+    letter-spacing:.03em; text-transform:uppercase; padding:5px 10px; border-radius:20px; margin-bottom:10px;
+  }
+  .tag-ok{background:#E4F8EC; color:#1C8A4B;}
+  .tag-no{background:#FDE6E7; color:var(--red);}
+  .tag-info{background:#E9EEFF; color:#33499E;}
+  .tag-warn{background:#FFF3D9; color:#B57500;}
+  .tag-clause{
+    display:inline-flex; align-items:center; gap:6px; font-size:0.7rem; font-weight:800;
+    padding:5px 10px; border-radius:20px; margin-bottom:10px; margin-left:6px;
+    background:var(--navy); color:white; font-family:'Nunito Sans', sans-serif;
+  }
+
+  .card-title{ font-size:1.05rem; font-weight:700; margin:0 0 8px; color:var(--navy); }
+  .card p{ margin:0; font-size:0.95rem; line-height:1.55; color:#2B3A5C; }
+  .card p + p{margin-top:8px;}
+  .card ul{ margin:8px 0 0; padding-left:18px; }
+  .card li{ font-size:0.95rem; line-height:1.6; color:#2B3A5C; }
+  .stat-row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+  .stat-chip{ background:var(--bg); border-radius:12px; padding:8px 12px; font-size:0.82rem; font-weight:700; color:var(--navy); }
+  .hero-card{
+    background:linear-gradient(135deg, var(--navy) 0%, var(--navy-soft) 60%, #26397A 100%);
+    color:white; border:none; padding:24px;
+  }
+  .hero-card .card-title{color:white; font-size:1.25rem;}
+  .hero-card p{color:#D9E0F2;}
+  .hero-card .stat-chip{background:rgba(255,255,255,0.12); color:white;}
+  .hero-card .card-tag{background:var(--red); color:white;}
+
+  .grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .subhead{
+    font-size:0.78rem; font-weight:800; text-transform:uppercase; letter-spacing:.04em;
+    color:var(--ink-muted); margin:10px 2px 0;
+  }
+  @media (max-width:1100px){
+    .app{grid-template-columns:1fr;}
+    .sticky{position:relative; top:0; max-height:none;}
+    .grid-2{grid-template-columns:1fr;}
+  }
+
+  /* ---------- Chat ---------- */
+  .chat{ display:flex; flex-direction:column; height:calc(100vh - 40px); }
+  .chat-head{
+    display:flex; align-items:center; gap:10px; padding:18px;
+    border-bottom:1px solid var(--card-line); border-radius:var(--radius-xl) var(--radius-xl) 0 0;
+    background:var(--navy); color:white;
+  }
+  .chat-head .bot-avatar{
+    width:38px;height:38px; border-radius:50%; background:var(--red);
+    display:flex;align-items:center;justify-content:center; font-size:1.15rem; flex-shrink:0;
+  }
+  .chat-head .title{font-weight:800; font-size:0.98rem;}
+  .chat-head .status{font-size:0.72rem; color:#B9E7C9; font-weight:700;}
+  .status::before{content:"●"; color:#3ED07A; margin-right:4px;}
+
+  .chat-body{
+    flex:1; overflow-y:auto; padding:18px 14px; display:flex; flex-direction:column; gap:10px; background:var(--bg);
+  }
+  .bubble{ max-width:82%; padding:11px 14px; border-radius:16px; font-size:0.88rem; line-height:1.45; animation:pop .25s ease; }
+  @keyframes pop{ from{opacity:0; transform:scale(.92) translateY(6px);} to{opacity:1; transform:scale(1) translateY(0);} }
+  .bubble.bot{ align-self:flex-start; background:white; color:var(--navy); border-bottom-left-radius:4px; box-shadow:var(--shadow-soft); }
+  .bubble.user{ align-self:flex-end; background:var(--navy); color:white; border-bottom-right-radius:4px; }
+  .bubble.typing{ align-self:flex-start; background:white; display:flex; gap:4px; padding:14px 16px; box-shadow:var(--shadow-soft); }
+  .typing span{ width:6px;height:6px; background:#9AA6BE; border-radius:50%; display:inline-block; animation:bounce 1s infinite ease-in-out; }
+  .typing span:nth-child(2){animation-delay:.15s;}
+  .typing span:nth-child(3){animation-delay:.3s;}
+  @keyframes bounce{ 0%,80%,100%{transform:translateY(0); opacity:.5;} 40%{transform:translateY(-5px); opacity:1;} }
+
+  .chat-input{
+    display:flex; align-items:center; gap:8px; padding:14px;
+    border-top:1px solid var(--card-line); background:white; border-radius:0 0 var(--radius-xl) var(--radius-xl);
+  }
+  .chat-input input{
+    flex:1; border:1px solid var(--card-line); background:var(--bg); border-radius:20px; padding:11px 16px;
+    font-size:0.88rem; font-family:inherit; color:var(--navy); outline:none; transition:border-color .15s ease;
+  }
+  .chat-input input:focus{border-color:var(--red);}
+  .chat-input input::placeholder{color:#9AA6BE;}
+  .send-btn{
+    width:42px;height:42px; border-radius:50%; border:none; background:var(--red); color:white;
+    display:flex;align-items:center;justify-content:center; cursor:pointer; flex-shrink:0;
+    transition:transform .12s ease, background .15s ease; font-size:1.1rem;
+  }
+  .send-btn:hover{background:var(--red-soft); transform:scale(1.06);}
+  .send-btn:active{transform:scale(.94);}
+
+  ::-webkit-scrollbar{width:8px;}
+  ::-webkit-scrollbar-thumb{background:#D3DAE6; border-radius:10px;}
+
+  a.link-chip{
+    display:inline-block; margin-top:10px; font-size:0.82rem; font-weight:800; color:var(--red);
+    text-decoration:none; background:#FDE6E7; padding:8px 14px; border-radius:20px;
+  }
+  a.link-chip:hover{background:#FBCFD2;}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ============ LEFT: SIDEBAR ============ -->
+  <aside class="col sidebar sticky">
+    <div class="brand"><span class="dot">🏠</span> Tenda & Você</div>
+
+    <div class="profile">
+      <div class="avatar">🙂</div>
+      <div>
+        <div class="hi">Olá, Vizinho! 👋</div>
+        <div class="sub">Encanto Piatã · Bloco livre</div>
+      </div>
+    </div>
+
+    <nav class="menu" id="menu">
+      <button class="nav-item active" data-target="reforma"><span class="emoji">🛠️</span> Reforma e Obra <span class="count" id="cnt-reforma">0</span></button>
+      <button class="nav-item" data-target="contrato"><span class="emoji">📄</span> O Contrato <span class="count" id="cnt-contrato">0</span></button>
+      <button class="nav-item" data-target="condominio"><span class="emoji">🏢</span> O Condomínio</button>
+      <button class="nav-item" data-target="duvidas"><span class="emoji">❓</span> Dúvidas Gerais <span class="count" id="cnt-duvidas">0</span></button>
+    </nav>
+
+    <div class="sidebar-foot">
+      As informações aqui são um resumo simplificado. 📚 O documento oficial é sempre o Memorial Descritivo e o seu contrato.
+    </div>
+  </aside>
+
+  <!-- ============ CENTER: FEED ============ -->
+  <main class="col feed">
+
+    <!-- REFORMA -->
+    <section class="section active" id="reforma">
+      <div class="feed-header">
+        <h1>🛠️ Reforma e Obra</h1>
+        <span class="kicker">O que pode e o que não pode</span>
+      </div>
+
+      <div class="search-wrap">
+        <input type="text" id="searchReforma" placeholder="Buscar por assunto: box, peso, elétrica, gás... 🔎">
+        <span class="icon">🔍</span>
+      </div>
+      <div class="search-meta" id="metaReforma"></div>
+
+      <div class="card hero-card">
+        <span class="card-tag">📌 Fixado</span>
+        <h3 class="card-title">Seu apê é de concreto! 🧱</h3>
+        <p>As paredes do seu apartamento são estruturais, feitas de concreto. Isso é o que deixa o prédio inteiro de pé — inclusive o apartamento do seu vizinho! Por isso, elas têm regras especiais. Confira abaixo os 24 pontos essenciais antes de colocar a mão na obra. 👇</p>
+        <div class="stat-row">
+          <span class="stat-chip">🏗️ Estrutura em concreto</span>
+          <span class="stat-chip">🧱 Vedação = parede que segura o prédio</span>
+        </div>
+      </div>
+
+      <div id="reformaList" class="section active" style="display:flex; flex-direction:column; gap:16px;"></div>
+      <div class="no-results" id="reformaEmpty" style="display:none;">😅 Não achamos nada com esse termo. Tenta buscar por outra palavra!</div>
+
+      <div class="card">
+        <span class="card-tag tag-info">💡 Dica de vizinho</span>
+        <h3 class="card-title">Ficou com dúvida no meio da obra?</h3>
+        <p>Chama a gente ali no chat ao lado 👉 ou abre um chamado no app <strong>Tenda com Você</strong>. É sempre melhor perguntar antes de furar a parede! 😅</p>
+      </div>
+    </section>
+
+    <!-- CONTRATO -->
+    <section class="section" id="contrato">
+      <div class="feed-header">
+        <h1>📄 O Contrato</h1>
+        <span class="kicker">O que você comprou, sem juridiquês — com referência à cláusula</span>
+      </div>
+
+      <div class="card hero-card">
+        <span class="card-tag">🏡 Seu apê</span>
+        <h3 class="card-title">2 quartos, do jeitinho certo para começar sua vida nova</h3>
+        <p>Seu apartamento tem 2 quartos e metragem entre 38,54 m² e 38,73 m², dependendo da planta do seu bloco. Abaixo, traduzimos mais de 50 pontos do seu contrato para uma linguagem simples — e sempre indicamos em qual cláusula cada assunto está. 😊</p>
+        <div class="stat-row">
+          <span class="stat-chip">🛏️ 2 quartos</span>
+          <span class="stat-chip">📐 38,54 m² – 38,73 m²</span>
+          <span class="stat-chip">🛡️ 5 anos de garantia estrutural</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="card-tag tag-warn">⚠️ Importante</span>
+        <p>Os números de cláusula abaixo seguem a estrutura padrão de um contrato de compra e venda de imóvel na planta. Sempre confira o número exato no <strong>seu contrato assinado</strong> — pode variar um pouco conforme o bloco e a data de assinatura.</p>
+      </div>
+
+      <div id="contratoList" style="display:flex; flex-direction:column; gap:14px;"></div>
+    </section>
+
+    <!-- CONDOMÍNIO -->
+    <section class="section" id="condominio">
+      <div class="feed-header">
+        <h1>🏢 O Condomínio</h1>
+        <span class="kicker">Encanto Piatã, seu novo endereço</span>
+      </div>
+
+      <div class="card hero-card">
+        <span class="card-tag">📍 Onde fica</span>
+        <h3 class="card-title">Encanto Piatã</h3>
+        <p>Rua Colina das Esmeraldas, 163 — Piatã, Salvador/BA. Pertinho da praia, do Shopping Paralela e de tudo que você precisa no dia a dia. 🌊</p>
+        <div class="stat-row">
+          <span class="stat-chip">🏗️ 15 andares</span>
+          <span class="stat-chip">🏘️ 8 blocos</span>
+          <span class="stat-chip">🚪 1.611 unidades</span>
+        </div>
+      </div>
+
+      <div class="subhead">🏗️ Como o condomínio é entregue</div>
+
+      <div class="card">
+        <span class="card-tag tag-info">📦 Entrega em fases</span>
+        <h3 class="card-title">O Encanto Piatã é entregue por etapas</h3>
+        <p>Com 8 blocos, o condomínio é entregue em <strong>fases</strong>: nem todos os blocos ficam prontos ao mesmo tempo. Isso é normal em empreendimentos grandes! Conforme cada fase é concluída, as chaves daquele bloco são entregues e as áreas comuns relacionadas vão sendo liberadas para uso. 🏗️</p>
+        <p>Ou seja: é possível que seu bloco já esteja entregue enquanto outro ainda está em obra ao lado — a rotina de segurança e acesso é organizada para que isso não atrapalhe seu dia a dia. 👷</p>
+      </div>
+
+      <div class="subhead">💰 Entendendo a taxa de condomínio</div>
+
+      <div class="card">
+        <span class="card-tag tag-info">🧾 O que é</span>
+        <h3 class="card-title">Para que serve a taxa de condomínio?</h3>
+        <p>É o valor que todos os moradores pagam mensalmente para cobrir as despesas comuns do prédio: água e luz das áreas coletivas, salário da equipe (portaria, limpeza, manutenção), conservação das áreas de lazer, seguro predial e o fundo de reserva. 🧹💡</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <span class="card-tag tag-warn">⏰ Quando começa</span>
+          <h3 class="card-title">A partir de quando eu pago?</h3>
+          <p>A cobrança da taxa de condomínio geralmente começa a partir da <strong>entrega das chaves</strong> da sua unidade, quando o condomínio passa a existir formalmente (mesmo antes da primeira assembleia, sob gestão provisória). 🔑</p>
+        </div>
+        <div class="card">
+          <span class="card-tag tag-info">⚖️ Como é dividido</span>
+          <h3 class="card-title">Fração ideal</h3>
+          <p>As despesas são rateadas entre todos os apês, proporcionalmente à <strong>fração ideal</strong> de cada unidade — geralmente parecida, já que as unidades têm metragens próximas. 📊</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="card-tag tag-info">🗂️ Antes da primeira assembleia</span>
+        <h3 class="card-title">Administradora provisória</h3>
+        <p>Assim que as primeiras chaves são entregues, uma <strong>administradora provisória</strong> cuida da gestão do dia a dia (portaria, limpeza, contas) até que os próprios moradores se reúnam e formalizem o condomínio na primeira assembleia. 📋</p>
+      </div>
+
+      <div class="subhead">🗳️ As assembleias do seu condomínio</div>
+
+      <div class="card">
+        <span class="card-tag tag-info">🏛️ A primeira reunião</span>
+        <h3 class="card-title">AGI — Assembleia Geral de Instalação</h3>
+        <p>É a primeira grande reunião dos moradores, marcando o "nascimento oficial" do condomínio. Nela, normalmente são discutidos e votados:</p>
+        <ul>
+          <li>📜 Aprovação da <strong>convenção de condomínio</strong> (as regras gerais).</li>
+          <li>📋 Aprovação do <strong>regimento interno</strong> (regras do dia a dia, como uso de áreas comuns).</li>
+          <li>🗳️ <strong>Eleição do síndico</strong> efetivo (ou confirmação do síndico provisório).</li>
+          <li>👥 Formação do <strong>conselho fiscal</strong>, que fiscaliza as contas.</li>
+          <li>🏢 Contratação (ou confirmação) da <strong>administradora</strong> definitiva.</li>
+          <li>💰 Aprovação do <strong>orçamento inicial</strong> e definição do fundo de reserva.</li>
+        </ul>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <span class="card-tag tag-info">📅 Todo ano</span>
+          <h3 class="card-title">AGO — Assembleia Geral Ordinária</h3>
+          <p>Acontece anualmente. É quando o síndico presta contas do ano anterior, apresenta o orçamento do próximo e, se o mandato tiver terminado, uma nova eleição pode acontecer. 📊</p>
+        </div>
+        <div class="card">
+          <span class="card-tag tag-warn">🚨 Quando precisar</span>
+          <h3 class="card-title">AGE — Assembleia Geral Extraordinária</h3>
+          <p>Convocada fora do calendário normal para tratar de assuntos urgentes, como obras extras, mudanças de regras ou decisões que não podem esperar até a próxima AGO. ⚡</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="card-tag tag-ok">🛟 Reserva de emergência</span>
+        <h3 class="card-title">Fundo de reserva</h3>
+        <p>Parte da taxa de condomínio é guardada em um <strong>fundo de reserva</strong>, usado para emergências e manutenções futuras (como pintura da fachada ou troca de equipamentos). O percentual destinado é definido em assembleia. 🏦</p>
+      </div>
+
+      <div class="subhead">🎉 Lazer e infraestrutura</div>
+
+      <div class="card">
+        <span class="card-tag tag-info">🎉 Lazer que é diferencial</span>
+        <h3 class="card-title">O que rola no condomínio</h3>
+        <ul>
+          <li>💻 <strong>Coworking</strong> no salão de festas, pra trabalhar sem sair de casa.</li>
+          <li>🥂 <strong>Salão de festas gourmet</strong>, pra comemorar em grande estilo.</li>
+          <li>🏆 <strong>Sport Bar</strong>, pra assistir ao jogo do seu time com a galera.</li>
+          <li>💪 Áreas de <strong>fitness e funcional externo</strong>, pra manter o treino em dia.</li>
+          <li>🐶 <strong>Play Pet</strong>, um cantinho especial pro seu melhor amigo.</li>
+          <li>📦 <strong>Espaço Delivery</strong>, pra receber suas compras com tranquilidade.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <span class="card-tag tag-ok">🔐 Segurança</span>
+        <h3 class="card-title">Portaria 24 horas</h3>
+        <p>Portaria com segurança 24h e portão duplo. Você e sua família merecem sossego todos os dias da semana. 🌙</p>
+      </div>
+
+      <div class="card">
+        <span class="card-tag tag-info">🌱 Sustentabilidade</span>
+        <h3 class="card-title">Pensado pra economizar também</h3>
+        <p>Iluminação em LED nas áreas comuns, torneiras com arejador, bacias de duplo acionamento e reservatório de reúso de água. Bom pra você e pro planeta! 🌎</p>
+      </div>
+
+      <div class="card">
+        <span class="card-tag tag-info">📋 Depois da AGI</span>
+        <h3 class="card-title">Regimento interno define a convivência</h3>
+        <p>Regras como horário de silêncio, uso de áreas de lazer, quantidade de pets por unidade e reservas de espaço são definidas no regimento interno, aprovado pelos próprios moradores. Participar das assembleias é a melhor forma de opinar sobre elas! 🙋</p>
+      </div>
+    </section>
+
+    <!-- DÚVIDAS GERAIS -->
+    <section class="section" id="duvidas">
+      <div class="feed-header">
+        <h1>❓ Dúvidas Gerais</h1>
+        <span class="kicker">As perguntas que todo mundo faz</span>
+      </div>
+
+      <div class="search-wrap">
+        <input type="text" id="searchDuvidas" placeholder="Buscar dúvida: pet, garagem, mudança, barulho... 🔎">
+        <span class="icon">🔍</span>
+      </div>
+      <div class="search-meta" id="metaDuvidas"></div>
+
+      <div id="duvidasList" style="display:flex; flex-direction:column; gap:14px;"></div>
+      <div class="no-results" id="duvidasEmpty" style="display:none;">😅 Não achamos nada com esse termo. Tenta buscar por outra palavra, ou chama o Tenda Bot no chat!</div>
+    </section>
+
+  </main>
+
+  <!-- ============ RIGHT: CHAT ============ -->
+  <aside class="col sticky">
+    <div class="chat">
+      <div class="chat-head">
+        <div class="bot-avatar">🤖</div>
+        <div>
+          <div class="title">Tenda Bot</div>
+          <div class="status">online agora</div>
+        </div>
+      </div>
+
+      <div class="chat-body" id="chatBody">
+        <div class="bubble bot">Oi, vizinho! 👋 Sou o Tenda Bot. Pode perguntar o que quiser sobre seu apê, reforma ou o condomínio! 😄</div>
+      </div>
+
+      <div class="chat-input">
+        <input type="text" id="chatInput" placeholder="Digite sua dúvida... 💬" autocomplete="off">
+        <button class="send-btn" id="sendBtn" aria-label="Enviar mensagem">➤</button>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<script>
+/* =====================================================================
+   DATA: REFORMA E OBRA (24 pontos)
+===================================================================== */
+const reformaData = [
+  {tag:'no', label:'🚫 Nunca faça isso', title:'Parede de concreto é estrutural', text:'As paredes de concreto do seu apê sustentam o prédio inteiro. Nunca quebre, corte ou faça nichos nelas — nem para instalar tomada ou quadro. 🧱'},
+  {tag:'no', label:'🚫 Nunca faça isso', title:'A laje (chão e teto) também é estrutura', text:'A laje zero não pode ser furada, rebaixada ou cortada. Ela segura o peso de todos os andares acima e abaixo do seu. 🚫'},
+  {tag:'ok', label:'✅ Pode fazer', title:'Drywall pode ser remodelado', text:'As paredes de drywall (as mais leves) podem ser movidas, retiradas ou substituídas para você criar a divisão de ambientes que preferir. 🪵'},
+  {tag:'ok', label:'✅ Pode fazer', title:'Piso: laminado ou cerâmica liberados', text:'Você pode trocar o piso entregue por laminado ou cerâmica do seu gosto, respeitando o limite de peso do ambiente. 🟫'},
+  {tag:'ok', label:'✅ Pode fazer', title:'Box de vidro é permitido', text:'Pode instalar box de vidro no banheiro, desde que fixado na parede sem quebrar o concreto estrutural. 🚿'},
+  {tag:'warn', label:'⚖️ Peso máximo', title:'150 kg/m² nos ambientes gerais', text:'Esse é o limite de carga que a estrutura aguenta nos ambientes normais (quartos, sala, cozinha). Fique de olho ao planejar móveis pesados. ⚖️'},
+  {tag:'warn', label:'⚖️ Peso máximo', title:'200 kg/m² na área de serviço', text:'A área de serviço aguenta um pouco mais de peso, mas também tem limite — não é ilimitado! 🧺'},
+  {tag:'no', label:'🚫 Nunca faça isso', title:'Rasgos novos na parede estrutural', text:'Precisa mudar um ponto de água ou esgoto? A alteração deve ficar dentro do forro, drywall ou canaletas, nunca cortando o concreto. 🚱'},
+  {tag:'info', label:'💡 Com cuidado', title:'Elétrica pode ser adaptada', text:'Novos pontos de tomada ou iluminação são permitidos, desde que passem por dentro do forro/drywall e sigam as normas técnicas de instalações elétricas. 💡'},
+  {tag:'info', label:'🔧 Com cuidado', title:'Hidráulica dentro do padrão', text:'Você pode adaptar torneiras e registros do seu apê, mas as prumadas (tubulações coletivas que passam por todos os andares) não podem ser alteradas. 🔧'},
+  {tag:'ok', label:'✅ Pode fazer', title:'Ar-condicionado tem instalação liberada', text:'Pode instalar seu ar-condicionado, respeitando o ponto de dreno e sem alterar a fachada padrão do prédio. ❄️'},
+  {tag:'warn', label:'🪟 Atenção', title:'Janelas seguem padrão de fachada', text:'Pode trocar a esquadria, mas o modelo e a cor precisam respeitar o padrão aprovado para manter a fachada uniforme. 🪟'},
+  {tag:'info', label:'🎨 Liberado', title:'Pintura interna é liberada', text:'Dentro do seu apê, pinte como quiser! Já a fachada e as áreas externas seguem sempre o padrão definido pelo condomínio. 🎨'},
+  {tag:'warn', label:'🛡️ Atenção', title:'Redes e gradis têm modelo padrão', text:'Quer proteção na varanda ou janela? Use o modelo aprovado em assembleia para manter a segurança e a estética do prédio. 🛡️'},
+  {tag:'info', label:'🛗 Regra de uso', title:'Elevador de serviço é para mudanças e obra', text:'Materiais de construção, móveis e entulho devem circular sempre pelo elevador de serviço, nunca pelo social. 🛗'},
+  {tag:'warn', label:'🕐 Horário', title:'Obra tem horário para funcionar', text:'Reformas com barulho normalmente só podem acontecer em dias úteis, dentro do horário definido na convenção do condomínio (fale com a portaria). 🕐'},
+  {tag:'no', label:'🚫 Nunca faça isso', title:'Entulho não vai no lixo comum', text:'Contrate uma caçamba ou serviço especializado para descartar entulho de obra. Jogar no lixo comum do prédio é proibido. 🗑️'},
+  {tag:'warn', label:'📝 Antes de começar', title:'Toda reforma precisa de aviso prévio', text:'Mesmo reformas pequenas devem ser informadas à administradora ou síndico antes de começar. Assim ninguém é pego de surpresa. 📝'},
+  {tag:'warn', label:'👷 Obrigatório', title:'Reformas estruturais exigem responsável técnico', text:'Se a obra envolve elétrica, hidráulica ou qualquer estrutura, contrate um profissional com ART/RRT. Segurança em primeiro lugar! 👷'},
+  {tag:'no', label:'🚫 Fique atento', title:'Reforma não autorizada pode custar sua garantia', text:'Mexer sem autorização em pontos estruturais pode fazer você perder a garantia daquela parte do imóvel. Sempre siga as regras! 🛡️'},
+  {tag:'no', label:'🚪 Segurança', title:'Porta corta-fogo tem padrão obrigatório', text:'Se seu apê tem porta corta-fogo, ela é item de segurança do prédio. A substituição só pode ser por modelo certificado equivalente. 🚪'},
+  {tag:'no', label:'🔥 Proibido', title:'Botijão de gás de 13kg é proibido', text:'O condomínio segue um padrão de instalação de gás. Botijões de 13kg não são permitidos dentro do apartamento. 🔥'},
+  {tag:'ok', label:'✅ Pode fazer', title:'Móveis planejados podem ser fixados no drywall', text:'Prateleiras e armários podem ser presos ao drywall com buchas apropriadas. Já no concreto, só com autorização e técnica correta. 🪛'},
+  {tag:'no', label:'📐 Nunca faça isso', title:'Não é permitido aumentar sua área privativa', text:'Fechar varanda, invadir corredor ou área comum para "ganhar espaço" não é permitido e pode gerar multa. 📐'}
+];
+
+/* =====================================================================
+   DATA: O CONTRATO (54 pontos, cada um com referência de cláusula)
+===================================================================== */
+const contratoData = [
+  {clause:'Cláusula 1.1', title:'Quem são as partes do contrato', text:'Aqui o contrato identifica a construtora vendedora e você, o comprador, com nome completo, CPF e endereço. Confira se seus dados estão certinhos. 📋'},
+  {clause:'Cláusula 1.2', title:'Representantes legais', text:'Se o contrato foi assinado por procurador ou representante, essa cláusula registra quem assinou em nome de quem. 🖊️'},
+  {clause:'Cláusula 2.1', title:'Qual apê você comprou', text:'Define o número exato da sua unidade, o bloco e o pavimento onde ela fica dentro do Encanto Piatã. 🏠'},
+  {clause:'Cláusula 2.2', title:'Metragem da unidade', text:'Confirma a área privativa do seu apê: 38,54 m², 38,70 m² ou 38,73 m², dependendo da planta do seu bloco. 📐'},
+  {clause:'Cláusula 2.3', title:'Quantidade de cômodos', text:'Registra que sua unidade tem 2 quartos, sala, cozinha, área de serviço e banheiro, conforme a planta aprovada. 🛏️'},
+  {clause:'Cláusula 2.4', title:'Vaga de garagem vinculada', text:'Informa se sua unidade tem vaga de carro e/ou moto vinculada, e o número dela no memorial. 🚗'},
+  {clause:'Cláusula 2.5', title:'Unidades adaptáveis para PCD', text:'Se sua unidade for adaptável para PCD, essa condição especial também fica registrada aqui. ♿'},
+  {clause:'Cláusula 3.1 / Anexo I', title:'Piso das áreas molhadas', text:'O memorial garante que banheiro, cozinha e área de serviço são entregues com piso cerâmico já instalado. 🚿'},
+  {clause:'Cláusula 3.2 / Anexo I', title:'Acabamento das áreas secas', text:'Quartos e sala são entregues com textura branca nas paredes, prontos para você pintar do seu jeito. 🎨'},
+  {clause:'Cláusula 3.3 / Anexo I', title:'Materiais estruturais', text:'Especifica que a estrutura é em concreto armado, o que define as regras de reforma que você viu na aba ao lado. 🧱'},
+  {clause:'Cláusula 3.4 / Anexo I', title:'Itens que não são entregues', text:'O memorial lista claramente o que não vem no apê, como móveis e decoração — sempre vale a pena conferir. 📋'},
+  {clause:'Cláusula 3.5', title:'Alterações no memorial', text:'Qualquer mudança relevante no projeto original precisa ser comunicada e, dependendo do caso, aprovada pelos compradores. 📢'},
+  {clause:'Cláusula 3.6 / Anexo II', title:'Planta e quadro de áreas', text:'O Anexo II traz a planta completa do seu apê, com todas as medidas oficiais aprovadas em cartório. 🗺️'},
+  {clause:'Cláusula 4.1', title:'Data prevista de entrega', text:'Define a data (ou o mês/ano) previsto para a entrega das chaves do seu bloco. Fique de olho nas comunicações da Tenda. 📅'},
+  {clause:'Cláusula 4.2', title:'Prazo de tolerância', text:'É comum existir um prazo de tolerância (normalmente até 180 dias corridos) além da data prevista, previsto em lei para esse tipo de obra. ⏳'},
+  {clause:'Cláusula 4.3', title:'Aviso de conclusão da obra', text:'Quando a obra terminar, você recebe uma comunicação oficial para agendar a vistoria e retirada das chaves. 📩'},
+  {clause:'Cláusula 4.4', title:'Casos de força maior', text:'Eventos fora do controle da construtora podem justificar prazos adicionais, sempre informados a você. ⚠️'},
+  {clause:'Cláusula 5.1 / Anexo III', title:'Onde está o valor do meu contrato', text:'Todos os valores, parcelas e formas de pagamento ficam detalhados no Quadro Resumo (Anexo III), não no corpo principal do contrato. 📑'},
+  {clause:'Cláusula 5.2', title:'Correção monetária durante a obra', text:'Enquanto o prédio está em construção, normalmente as parcelas são corrigidas por um índice específico. Depois da entrega, o índice pode mudar. 📈'},
+  {clause:'Cláusula 5.3', title:'Forma de pagamento das parcelas', text:'Explica como e onde pagar cada parcela e o que fazer em caso de atraso. 💳'},
+  {clause:'Cláusula 6.1', title:'Financiamento bancário', text:'Se parte do seu apê é financiada, essa cláusula trata da relação entre você, a construtora e o banco financiador. 🏦'},
+  {clause:'Cláusula 6.2', title:'Uso do FGTS', text:'Se você usa FGTS na compra, aqui estão as condições para liberação do saldo junto à Caixa. 💼'},
+  {clause:'Cláusula 6.3', title:'Subsídio Minha Casa Minha Vida', text:'Caso seu contrato tenha subsídio do programa, as condições de elegibilidade ficam registradas nessa cláusula. 🏡'},
+  {clause:'Cláusula 6.4', title:'Aprovação de crédito prévia', text:'A assinatura do contrato pode estar condicionada à aprovação do seu crédito pelo banco antes da liberação final. ✅'},
+  {clause:'Cláusula 7.1', title:'Posso repassar meu contrato?', text:'Sim, é possível ceder (transferir) seu contrato para outra pessoa, mas depende de autorização prévia da construtora. 🔄'},
+  {clause:'Cláusula 7.2', title:'Condições da cessão', text:'Essa cláusula explica os documentos e etapas necessárias para formalizar a transferência do seu apê para outro comprador. 📄'},
+  {clause:'Cláusula 8.1', title:'Vaga vinculada não se vende separada', text:'A vaga de garagem é vinculada à sua unidade e não pode ser vendida separadamente do apartamento. 🚗'},
+  {clause:'Cláusula 8.2', title:'Vagas para PCD', text:'O empreendimento reserva vagas específicas para PCD, sinalizadas conforme legislação. ♿'},
+  {clause:'Cláusula 8.3', title:'Vagas para moto', text:'Se sua unidade tiver vaga de moto, ela também é registrada nessa cláusula com sua localização. 🏍️'},
+  {clause:'Cláusula 9.1', title:'Matrícula individual do seu apê', text:'Depois de pronto, o prédio é dividido em matrículas individuais no cartório — cada apê ganha a sua própria. 📜'},
+  {clause:'Cláusula 9.2', title:'Por que isso importa', text:'A matrícula individual é o que permite registrar seu financiamento e, futuramente, vender ou herdar o imóvel. 🔑'},
+  {clause:'Cláusula 10.1', title:'Quando a taxa de condomínio começa', text:'A cobrança normalmente começa a partir da entrega das chaves da sua unidade — veja mais detalhes na aba 🏢 O Condomínio.'},
+  {clause:'Cláusula 10.2', title:'Administradora provisória', text:'Até a Assembleia Geral de Instalação (AGI), uma administradora provisória cuida da gestão do condomínio. 🗂️'},
+  {clause:'Cláusula 10.3', title:'Rateio por fração ideal', text:'As despesas do condomínio são divididas entre todos os apês, proporcionalmente à fração ideal de cada unidade. ⚖️'},
+  {clause:'Cláusula 11.1', title:'Vistoria antes de receber as chaves', text:'Antes de assinar o termo de entrega, você faz uma vistoria conjunta no apê para conferir se está tudo certo. 🔍'},
+  {clause:'Cláusula 11.2', title:'Checklist de pendências', text:'Qualquer pendência encontrada na vistoria é anotada em um checklist, com prazo para a construtora resolver. ✅'},
+  {clause:'Cláusula 11.3', title:'Prazo para relatar vícios aparentes', text:'Problemas visíveis devem ser comunicados dentro de um prazo específico após a entrega — não deixe para depois! ⏰'},
+  {clause:'Cláusula 11.4', title:'Termo de aceite do imóvel', text:'Ao assinar o termo de entrega, você confirma o recebimento do apê nas condições vistoriadas. 🖋️'},
+  {clause:'Cláusula 12.1 / Manual do Proprietário', title:'Garantia estrutural de 5 anos', text:'A estrutura do prédio (fundação, vigas, lajes, paredes estruturais) tem garantia de 5 anos, conforme o Manual do Proprietário. 🛡️'},
+  {clause:'Cláusula 12.2 / Manual do Proprietário', title:'Garantia elétrica e hidráulica', text:'Redes elétricas e hidráulicas normalmente têm prazo de garantia próprio, menor que o estrutural. 🔌'},
+  {clause:'Cláusula 12.3 / Manual do Proprietário', title:'Garantia de impermeabilização', text:'Áreas impermeabilizadas (banheiros e área de serviço) têm prazo de garantia específico contra infiltrações. 💧'},
+  {clause:'Cláusula 12.4 / Manual do Proprietário', title:'Garantia de esquadrias', text:'Janelas e portas (esquadrias) têm prazo de garantia contra defeitos de fabricação e instalação. 🪟'},
+  {clause:'Cláusula 12.5 / Manual do Proprietário', title:'Garantia de acabamento', text:'Itens de acabamento (pintura, revestimentos) costumam ter prazo de garantia mais curto — fique atento logo após a entrega. 🎨'},
+  {clause:'Cláusula 12.6', title:'Como acionar a garantia', text:'Encontrou algum problema coberto por garantia? Abra um chamado pelo app Tenda com Você dentro do prazo válido. 📱'},
+  {clause:'Cláusula 13.1', title:'Seguro MIP', text:'O Seguro de Morte e Invalidez Permanente (MIP) é obrigatório em financiamentos e protege sua família em caso de imprevistos. 🛟'},
+  {clause:'Cláusula 13.2', title:'Seguro DFI', text:'O Seguro de Danos Físicos ao Imóvel (DFI) cobre o imóvel financiado contra incêndio e outros danos estruturais. 🔥'},
+  {clause:'Cláusula 14.1', title:'Regras em caso de desistência', text:'Se você precisar desistir da compra, essa cláusula explica o processo previsto em lei para o distrato. 📃'},
+  {clause:'Cláusula 14.2', title:'Prazo para devolução de valores', text:'Em caso de distrato, a cláusula detalha o prazo em que eventuais valores pagos são devolvidos, conforme legislação vigente. ⏳'},
+  {clause:'Cláusula 14.3', title:'Inadimplência', text:'Também trata o que acontece em caso de atraso ou não pagamento das parcelas combinadas. ⚠️'},
+  {clause:'Cláusula 15.1', title:'Uso dos seus dados pessoais', text:'Seus dados são usados para formalizar a compra, o financiamento e a comunicação sobre seu imóvel, conforme a LGPD. 🔒'},
+  {clause:'Cláusula 15.2', title:'Compartilhamento com parceiros', text:'Em alguns casos, dados são compartilhados com bancos e cartórios apenas para viabilizar seu financiamento e registro. 🤝'},
+  {clause:'Anexo II', title:'Tolerância de metragem', text:'A lei permite uma pequena tolerância na metragem final da unidade em relação ao projetado — dentro do normal em construções. 📐'},
+  {clause:'Anexo III', title:'Onde ver meu quadro de parcelas', text:'Todo o detalhamento financeiro do seu contrato está no Quadro Resumo, anexo III do seu contrato. 💼'},
+  {clause:'Manual do Proprietário', title:'Seu guia de uso e manutenção', text:'Documento separado do contrato que traz manutenções recomendadas, prazos de garantia detalhados e cuidados com cada ambiente. 📘'}
+];
+
+/* =====================================================================
+   DATA: DÚVIDAS GERAIS (100+ perguntas)
+===================================================================== */
+const duvidasData = [
+  {cat:'🔥 Gás e segurança', q:'Posso usar botijão de gás de 13kg?', a:'Não, o uso de botijão de 13kg é proibido dentro do apartamento. Siga sempre o padrão de gás aprovado pelo condomínio.'},
+  {cat:'🔥 Gás e segurança', q:'O prédio tem gás encanado?', a:'Consulte o memorial descritivo da sua unidade para confirmar o tipo de instalação de gás do seu bloco.'},
+  {cat:'🔥 Gás e segurança', q:'Posso usar churrasqueira a carvão na varanda?', a:'Normalmente não é permitido por questões de segurança e fumaça — use a churrasqueira coletiva do condomínio.'},
+  {cat:'🔥 Gás e segurança', q:'Detector de fumaça é obrigatório no apê?', a:'Siga as recomendações de segurança contra incêndio do Manual do Proprietário e da legislação local.'},
+  {cat:'🔥 Gás e segurança', q:'Onde fica o extintor mais próximo do meu andar?', a:'Os extintores ficam sinalizados nas áreas comuns de cada pavimento — confira a sinalização junto à escada.'},
+  {cat:'🧽 Limpeza', q:'Como limpo a parede de drywall?', a:'Só com pano levemente úmido, sem produtos abrasivos. Drywall não gosta de encharcar!'},
+  {cat:'🧽 Limpeza', q:'Posso lavar o chão com baldes de água?', a:'Evite. O excesso de água pode infiltrar e incomodar o vizinho de baixo — prefira pano úmido ou mop.'},
+  {cat:'🧽 Limpeza', q:'Como limpo o piso cerâmico sem estragar o rejunte?', a:'Use pano úmido com detergente neutro, evitando produtos ácidos que desgastam o rejunte.'},
+  {cat:'🧽 Limpeza', q:'Posso usar solução de cloro concentrado no banheiro?', a:'Use com moderação e sempre com ventilação — cloro em excesso pode danificar metais e vidros do box.'},
+  {cat:'🧽 Limpeza', q:'Como cuido do box de vidro para não manchar?', a:'Seque o vidro após o banho com um rodinho e limpe semanalmente com produto específico para vidros.'},
+  {cat:'🧽 Limpeza', q:'Posso limpar a fachada externa da minha janela sozinho?', a:'Não é recomendado por segurança. Contrate serviço especializado para limpeza de fachada.'},
+  {cat:'🧽 Limpeza', q:'Como conservo o piso laminado?', a:'Evite água em excesso e limpe com pano levemente úmido ou produto próprio para laminado.'},
+  {cat:'🧽 Limpeza', q:'Posso encerar o piso cerâmico?', a:'Sim, mas use produtos indicados para cerâmica, evitando deixar a superfície escorregadia.'},
+  {cat:'🧽 Limpeza', q:'Com que frequência devo limpar o ralo da área de serviço?', a:'Recomenda-se limpeza mensal para evitar entupimentos e maus odores.'},
+  {cat:'🧽 Limpeza', q:'Como limpo o filtro do meu ar-condicionado?', a:'Consulte o manual do equipamento; geralmente recomenda-se limpeza a cada 15 a 30 dias.'},
+  {cat:'🐾 Pets', q:'Posso ter pet no meu apê?', a:'Sim! Só siga o regimento interno do condomínio quanto a porte, quantidade e circulação nas áreas comuns.'},
+  {cat:'🐾 Pets', q:'Preciso usar coleira nas áreas comuns?', a:'Sim, guia ou coleira é obrigatória para os pets circularem em corredores, elevador e áreas comuns.'},
+  {cat:'🐾 Pets', q:'Onde meu pet pode brincar solto?', a:'No Play Pet, o espaço reservado para os bichinhos se exercitarem com segurança.'},
+  {cat:'🐾 Pets', q:'Preciso recolher as necessidades do meu pet nas áreas comuns?', a:'Sim, sempre! É uma questão de respeito com todos os vizinhos.'},
+  {cat:'🐾 Pets', q:'Meu pet pode usar o elevador social?', a:'Normalmente sim, desde que no colo ou com guia curta — confira o regimento interno para detalhes.'},
+  {cat:'🐾 Pets', q:'Existe limite de quantidade de pets por apê?', a:'Pode existir, conforme definido no regimento interno aprovado em assembleia.'},
+  {cat:'🐾 Pets', q:'Posso ter cães de grande porte?', a:'Depende das regras específicas definidas pelo condomínio no regimento interno.'},
+  {cat:'🐾 Pets', q:'Meu pet late muito, isso pode gerar problema?', a:'Sim, barulho excessivo pode gerar reclamação de vizinhos e até notificação — cuide do bem-estar do seu pet.'},
+  {cat:'📦 Mudança', q:'Qual elevador devo usar para minha mudança?', a:'Sempre o elevador de serviço, nunca o social, para não danificar acabamentos.'},
+  {cat:'📦 Mudança', q:'Preciso agendar a mudança com a portaria?', a:'Sim, agende com antecedência para reservar o elevador de serviço e evitar transtornos.'},
+  {cat:'📦 Mudança', q:'Existe horário permitido para fazer mudança?', a:'Sim, normalmente em dias úteis e dentro de um horário definido pela convenção — confirme com a portaria.'},
+  {cat:'📦 Mudança', q:'Posso deixar caixas de mudança no corredor?', a:'Não, as áreas comuns devem ficar sempre livres para circulação e segurança.'},
+  {cat:'📦 Mudança', q:'Como faço para receber entregas grandes, tipo móveis?', a:'Use a baia de embarque/desembarque e avise a portaria com antecedência.'},
+  {cat:'📦 Mudança', q:'Onde reservo o Espaço Delivery?', a:'Encomendas menores podem ficar no Espaço Delivery — combine a rotina com a portaria.'},
+  {cat:'🚗 Estacionamento', q:'Posso emprestar minha vaga para visitantes?', a:'Consulte a convenção do condomínio — geralmente vagas são de uso exclusivo do proprietário vinculado.'},
+  {cat:'🚗 Estacionamento', q:'Tem vaga para visitantes?', a:'Verifique com a administradora se há vagas rotativas disponíveis para convidados.'},
+  {cat:'🚗 Estacionamento', q:'Posso guardar objetos na minha vaga de garagem?', a:'Normalmente não é permitido usar a vaga como depósito, por questões de segurança contra incêndio.'},
+  {cat:'🚗 Estacionamento', q:'Tem vaga para moto?', a:'Sim, o Encanto Piatã conta com vagas específicas para motos.'},
+  {cat:'🚗 Estacionamento', q:'Como funciona a vaga de carro compartilhado?', a:'É um espaço pensado para apps de compartilhamento de veículo, facilitando seu dia a dia sem carro próprio.'},
+  {cat:'🚗 Estacionamento', q:'Posso lavar meu carro na vaga de garagem?', a:'Normalmente não é permitido por questões de escoamento de água — consulte o regimento interno.'},
+  {cat:'🚗 Estacionamento', q:'Minha vaga é PCD, posso trocar com outro morador?', a:'Vagas PCD seguem regras específicas de destinação — fale com a administradora antes de qualquer troca.'},
+  {cat:'🎉 Áreas comuns', q:'Preciso reservar a quadra coberta?', a:'Sim, normalmente é feita uma reserva com a portaria ou pelo aplicativo do condomínio.'},
+  {cat:'🎉 Áreas comuns', q:'Posso levar convidados para o Sport Bar?', a:'Sim, dentro das regras de quantidade e horário definidas pelo regimento interno.'},
+  {cat:'🎉 Áreas comuns', q:'O salão de festas gourmet tem custo para reservar?', a:'Consulte a administradora sobre condições e regras de reserva do espaço.'},
+  {cat:'🎉 Áreas comuns', q:'Como funciona o coworking do condomínio?', a:'É um espaço compartilhado para trabalhar remotamente, geralmente com reserva prévia.'},
+  {cat:'🎉 Áreas comuns', q:'Tem Wi-Fi em todas as áreas comuns?', a:'O Wi-Fi está disponível em pontos limitados das áreas comuns, conforme especificado no memorial.'},
+  {cat:'🎉 Áreas comuns', q:'Posso usar a academia a qualquer horário?', a:'As áreas de fitness geralmente têm horário de funcionamento definido no regimento interno.'},
+  {cat:'🎉 Áreas comuns', q:'O playground tem faixa etária recomendada?', a:'Sim, sempre siga as recomendações de idade indicadas nos brinquedos por segurança.'},
+  {cat:'🎉 Áreas comuns', q:'Posso fazer aniversário infantil no Play Kids?', a:'Consulte a administradora — normalmente esses espaços são de uso livre e compartilhado, sem reserva exclusiva.'},
+  {cat:'🎉 Áreas comuns', q:'Como funciona o uso da churrasqueira coletiva?', a:'Normalmente é feita reserva prévia com a portaria, respeitando o rodízio entre moradores.'},
+  {cat:'🎉 Áreas comuns', q:'A praça de jogos pode ser usada à noite?', a:'Siga o horário de silêncio e funcionamento das áreas externas definido pelo regimento interno.'},
+  {cat:'🔐 Portaria e segurança', q:'A portaria funciona 24h?', a:'Sim! O Encanto Piatã tem portaria com segurança 24 horas todos os dias.'},
+  {cat:'🔐 Portaria e segurança', q:'Como cadastro um visitante?', a:'Informe os dados do visitante à portaria com antecedência ou no momento da chegada, conforme o processo do condomínio.'},
+  {cat:'🔐 Portaria e segurança', q:'Existe câmera nas áreas comuns?', a:'A segurança das áreas comuns segue o projeto de segurança do condomínio — confira com a administradora.'},
+  {cat:'🔐 Portaria e segurança', q:'Posso emprestar minha chave/tag para outra pessoa?', a:'Não é recomendado. Cada morador deve ter seu próprio meio de acesso cadastrado.'},
+  {cat:'🔐 Portaria e segurança', q:'O que fazer se perder minha tag de acesso?', a:'Comunique a portaria e a administradora imediatamente para bloquear e solicitar uma nova.'},
+  {cat:'🔐 Portaria e segurança', q:'Como funciona o controle de entrada de prestadores de serviço?', a:'Prestadores devem ser identificados na portaria antes de subir, sempre com autorização do morador.'},
+  {cat:'🔧 Manutenção e garantia', q:'Achei um problema no meu apê, o que faço?', a:'Abra um chamado pelo app Tenda com Você o quanto antes, dentro do prazo de garantia.'},
+  {cat:'🔧 Manutenção e garantia', q:'Quanto tempo tenho de garantia estrutural?', a:'5 anos, cobrindo fundação, vigas, lajes e paredes estruturais.'},
+  {cat:'🔧 Manutenção e garantia', q:'Infiltração no banheiro é coberta por garantia?', a:'Áreas impermeabilizadas têm prazo de garantia específico — registre o quanto antes pelo app.'},
+  {cat:'🔧 Manutenção e garantia', q:'Problemas elétricos têm garantia?', a:'Sim, instalações elétricas costumam ter prazo próprio de garantia — consulte o Manual do Proprietário.'},
+  {cat:'🔧 Manutenção e garantia', q:'E se a porta ou janela estiver empenada?', a:'Esquadrias (portas e janelas) também têm prazo de garantia contra defeitos de fabricação.'},
+  {cat:'🔧 Manutenção e garantia', q:'Rachadura pequena na pintura é garantia?', a:'Itens de acabamento costumam ter prazo de garantia mais curto — relate assim que perceber.'},
+  {cat:'🔧 Manutenção e garantia', q:'Como funciona a vistoria de entrega?', a:'Você faz uma vistoria conjunta antes de receber as chaves, anotando qualquer pendência em checklist.'},
+  {cat:'🔧 Manutenção e garantia', q:'Posso contratar minha própria manutenção preventiva?', a:'Sim, mas mantenha os registros — isso ajuda em caso de necessidade de acionar garantia futura.'},
+  {cat:'🔧 Manutenção e garantia', q:'O manual do proprietário tem prazo de leitura recomendado?', a:'Vale a pena ler assim que receber as chaves, antes de qualquer reforma ou adaptação.'},
+  {cat:'🔧 Manutenção e garantia', q:'Quem eu chamo para emergências fora do prazo de garantia?', a:'Nesse caso, o reparo passa a ser de responsabilidade do proprietário, com profissional de sua escolha.'},
+  {cat:'🏠 Locação e documentação', q:'Posso alugar meu apê?', a:'Sim, após a entrega das chaves e conforme as regras do seu contrato de financiamento, se houver.'},
+  {cat:'🏠 Locação e documentação', q:'Posso vender meu apê antes da entrega?', a:'É possível ceder o contrato para outra pessoa, mediante aprovação prévia da construtora.'},
+  {cat:'🏠 Locação e documentação', q:'Preciso avisar a administradora se eu alugar?', a:'Sim, é importante manter o cadastro de moradores atualizado com a administradora.'},
+  {cat:'🏠 Locação e documentação', q:'Como faço para colocar meu nome na matrícula?', a:'A individualização matricular acontece após a conclusão da obra, e o registro é feito em cartório.'},
+  {cat:'🏠 Locação e documentação', q:'Posso usar meu apê como escritório ou pequeno comércio?', a:'Consulte o regimento interno — unidades residenciais geralmente têm restrições para uso comercial.'},
+  {cat:'🏠 Locação e documentação', q:'Como conseguir a segunda via do contrato?', a:'Solicite à administradora ou ao canal de atendimento da Tenda.'},
+  {cat:'📶 Internet e entregas', q:'Posso instalar internet de qualquer operadora?', a:'Normalmente sim, seguindo as regras técnicas do condomínio para passagem de cabos.'},
+  {cat:'📶 Internet e entregas', q:'Onde fica a caixa de distribuição de internet do meu bloco?', a:'Geralmente próxima à central técnica do pavimento — pergunte à administradora.'},
+  {cat:'📶 Internet e entregas', q:'Como recebo encomendas quando não estou em casa?', a:'Use o Espaço Delivery ou combine com a portaria a melhor forma de recebimento.'},
+  {cat:'📶 Internet e entregas', q:'É seguro deixar chave reserva na portaria para entregas?', a:'Consulte a política do condomínio; geralmente não é recomendado por segurança.'},
+  {cat:'🚨 Emergências', q:'Meu apê ficou sem água, o que faço?', a:'Contate a portaria ou a administradora para verificar se é um problema pontual ou geral do prédio.'},
+  {cat:'🚨 Emergências', q:'Faltou luz só no meu apê, é problema do condomínio?', a:'Pode ser o disjuntor da sua unidade — verifique o quadro de energia antes de acionar a administradora.'},
+  {cat:'🚨 Emergências', q:'O que fazer em caso de incêndio?', a:'Siga a rota de fuga sinalizada, mantenha a calma e avise a portaria imediatamente.'},
+  {cat:'🚨 Emergências', q:'Como agir em caso de vazamento grande de água?', a:'Feche o registro geral do seu apê e avise a portaria/síndico imediatamente.'},
+  {cat:'🚨 Emergências', q:'O elevador quebrou, e agora?', a:'Avise a portaria imediatamente; a manutenção do elevador é responsabilidade do condomínio.'},
+  {cat:'🚨 Emergências', q:'Houve um princípio de incêndio na minha unidade, quem eu acionо?', a:'Ligue imediatamente para o 193 (Corpo de Bombeiros) e avise a portaria em seguida.'},
+  {cat:'🤝 Convivência', q:'Até que horas posso fazer barulho?', a:'Siga o horário de silêncio definido no regimento interno, normalmente à noite e de madrugada.'},
+  {cat:'🤝 Convivência', q:'Posso fazer festa no meu apê?', a:'Pode, desde que respeite os limites de barulho e horário definidos para convivência no prédio.'},
+  {cat:'🤝 Convivência', q:'Como resolver um desentendimento com vizinho?', a:'Procure o síndico ou a administradora para mediar a situação de forma tranquila.'},
+  {cat:'🤝 Convivência', q:'Posso estender roupa na varanda visível da fachada?', a:'Consulte o regimento interno — muitos condomínios restringem por questão estética.'},
+  {cat:'🤝 Convivência', q:'Fumar na varanda é permitido?', a:'Verifique as regras do regimento interno sobre fumo em áreas privativas e comuns.'},
+  {cat:'🤝 Convivência', q:'Posso colocar tapete ou objetos no corredor comum?', a:'Não, as áreas comuns devem ficar livres, inclusive por segurança em caso de emergência.'},
+  {cat:'🤝 Convivência', q:'Crianças podem brincar nos corredores?', a:'Recomenda-se usar as áreas de lazer específicas, como Play Kids e Play Baby, pensadas para isso.'},
+  {cat:'💰 Financeiro do condomínio', q:'Onde vejo o valor da minha taxa de condomínio?', a:'O valor exato é definido em assembleia e informado pela administradora, não consta no contrato de compra.'},
+  {cat:'💰 Financeiro do condomínio', q:'Posso pagar a taxa de condomínio de forma antecipada?', a:'Consulte a administradora sobre políticas de pagamento antecipado.'},
+  {cat:'💰 Financeiro do condomínio', q:'O que acontece se eu atrasar a taxa de condomínio?', a:'Pode haver cobrança de encargos, conforme definido na convenção do condomínio — evite atrasos!'},
+  {cat:'💰 Financeiro do condomínio', q:'Existe desconto para pagamento em dia?', a:'Depende da política definida pela assembleia do condomínio — confira com a administradora.'},
+  {cat:'💰 Financeiro do condomínio', q:'Como acompanho as contas do condomínio?', a:'As prestações de contas são apresentadas na Assembleia Geral Ordinária (AGO), anualmente.'},
+  {cat:'🏡 Dia a dia', q:'Posso trocar a fechadura da minha porta?', a:'Sim, desde que a porta corta-fogo (se houver) mantenha o padrão de segurança exigido.'},
+  {cat:'🏡 Dia a dia', q:'Posso pintar minha porta de entrada de outra cor?', a:'Normalmente as portas voltadas para área comum seguem um padrão — confirme com a administradora.'},
+  {cat:'🏡 Dia a dia', q:'Posso colocar câmera na porta do meu apê?', a:'Consulte o regimento interno sobre instalação de câmeras voltadas para áreas comuns, por questão de privacidade dos vizinhos.'},
+  {cat:'🏡 Dia a dia', q:'Meu apê é PCD-adaptável, posso pedir adaptações extras?', a:'Fale com a administradora sobre adaptações complementares dentro das regras do condomínio.'},
+  {cat:'🏡 Dia a dia', q:'Posso guardar bicicleta no meu apê?', a:'Sim, mas o condomínio também oferece bicicletário nas áreas comuns para facilitar.'},
+  {cat:'🏡 Dia a dia', q:'Como funciona a coleta seletiva de lixo?', a:'O condomínio conta com local específico para separação de recicláveis — siga a sinalização.'},
+  {cat:'🏡 Dia a dia', q:'Posso ter horta na minha varanda?', a:'Pequenas plantas geralmente são permitidas; culturas maiores podem seguir regras específicas do regimento interno.'},
+  {cat:'🏡 Dia a dia', q:'Existe restrição de peso para vasos grandes na varanda?', a:'Sim! Respeite sempre o limite de carga da estrutura (150 kg/m²) mesmo em objetos decorativos.'},
+  {cat:'🏡 Dia a dia', q:'Posso usar o Espaço Oficina para uso comercial?', a:'Não, ele é pensado para pequenos reparos pessoais dos moradores, sem fins comerciais.'},
+  {cat:'🏡 Dia a dia', q:'Quem cuida da manutenção das áreas de lazer?', a:'A manutenção das áreas comuns é de responsabilidade do condomínio, custeada pela taxa mensal.'},
+  {cat:'🗳️ Participação', q:'Posso sugerir melhorias para as áreas comuns?', a:'Sim! Leve sua sugestão para discussão na próxima Assembleia Geral.'},
+  {cat:'🗳️ Participação', q:'Como faço parte do conselho fiscal do condomínio?', a:'Basta se candidatar durante a Assembleia Geral de Instalação (AGI) ou Ordinária (AGO).'},
+  {cat:'🗳️ Participação', q:'Posso registrar reclamações formais sobre o condomínio?', a:'Sim, pelo canal oficial com a administradora ou diretamente na assembleia.'},
+  {cat:'🗳️ Participação', q:'Quero saber mais sobre a fase de entrega do meu bloco.', a:'Acompanhe as comunicações oficiais da Tenda e da administradora sobre o cronograma de fases.'},
+  {cat:'💬 Ainda com dúvida?', q:'Não achei minha resposta aqui.', a:'Chama o Tenda Bot ali no chat ao lado! Ele te ajuda ou te direciona pro canal certo.'}
+];
+
+/* =====================================================================
+   RENDER HELPERS
+===================================================================== */
+function normalize(str){
+  return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+}
+
+function renderReforma(list){
+  const el = document.getElementById('reformaList');
+  const empty = document.getElementById('reformaEmpty');
+  const meta = document.getElementById('metaReforma');
+  el.innerHTML = '';
+  if(list.length === 0){ empty.style.display = 'block'; meta.textContent = ''; return; }
+  empty.style.display = 'none';
+  const tagClass = {ok:'tag-ok', no:'tag-no', warn:'tag-warn', info:'tag-info'};
+  list.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `<span class="card-tag ${tagClass[item.tag]}">${item.label}</span>
+      <h3 class="card-title">${item.title}</h3>
+      <p>${item.text}</p>`;
+    el.appendChild(card);
+  });
+}
+
+function renderContrato(list){
+  const el = document.getElementById('contratoList');
+  el.innerHTML = '';
+  list.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `<span class="tag-clause">📍 ${item.clause}</span>
+      <h3 class="card-title">${item.title}</h3>
+      <p>${item.text}</p>`;
+    el.appendChild(card);
+  });
+}
+
+function renderDuvidas(list){
+  const el = document.getElementById('duvidasList');
+  const empty = document.getElementById('duvidasEmpty');
+  const meta = document.getElementById('metaDuvidas');
+  el.innerHTML = '';
+  if(list.length === 0){ empty.style.display = 'block'; meta.textContent = ''; return; }
+  empty.style.display = 'none';
+  list.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `<span class="card-tag tag-info">${item.cat}</span>
+      <h3 class="card-title">${item.q}</h3>
+      <p>${item.a}</p>`;
+    el.appendChild(card);
+  });
+}
+
+/* initial render */
+renderReforma(reformaData);
+renderContrato(contratoData);
+renderDuvidas(duvidasData);
+
+document.getElementById('cnt-reforma').textContent = reformaData.length;
+document.getElementById('cnt-contrato').textContent = contratoData.length;
+document.getElementById('cnt-duvidas').textContent = duvidasData.length;
+
+/* ---------- Search: Reforma ---------- */
+const searchReforma = document.getElementById('searchReforma');
+searchReforma.addEventListener('input', () => {
+  const term = normalize(searchReforma.value.trim());
+  const meta = document.getElementById('metaReforma');
+  if(!term){
+    renderReforma(reformaData);
+    meta.textContent = '';
+    return;
+  }
+  const filtered = reformaData.filter(i => normalize(i.title + ' ' + i.text).includes(term));
+  renderReforma(filtered);
+  meta.textContent = filtered.length + ' resultado(s) para "' + searchReforma.value + '"';
+});
+
+/* ---------- Search: Dúvidas ---------- */
+const searchDuvidas = document.getElementById('searchDuvidas');
+searchDuvidas.addEventListener('input', () => {
+  const term = normalize(searchDuvidas.value.trim());
+  const meta = document.getElementById('metaDuvidas');
+  if(!term){
+    renderDuvidas(duvidasData);
+    meta.textContent = '';
+    return;
+  }
+  const filtered = duvidasData.filter(i => normalize(i.q + ' ' + i.a + ' ' + i.cat).includes(term));
+  renderDuvidas(filtered);
+  meta.textContent = filtered.length + ' resultado(s) para "' + searchDuvidas.value + '"';
+});
+
+/* =====================================================================
+   SPA Navigation
+===================================================================== */
+const navItems = document.querySelectorAll('.nav-item');
+const sections = document.querySelectorAll('.feed > .section');
+
+navItems.forEach(btn => {
+  btn.addEventListener('click', () => {
+    navItems.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const target = btn.getAttribute('data-target');
+    sections.forEach(sec => {
+      sec.classList.remove('active');
+      if (sec.id === target) sec.classList.add('active');
+    });
+    document.querySelector('.feed').scrollTo({top:0, behavior:'smooth'});
+  });
+});
+
+/* =====================================================================
+   Mock Chat
+===================================================================== */
+const chatBody = document.getElementById('chatBody');
+const chatInput = document.getElementById('chatInput');
+const sendBtn = document.getElementById('sendBtn');
+
+const botReplies = [
+  "Que legal! Entendi sua dúvida 😄 Se for algo mais complexo, abre um chamado no app Tenda com Você que a equipe te ajuda rapidinho! 📱",
+  "Boa pergunta! 🤔 Dá uma olhadinha no feed central aqui do lado, acho que tem a resposta certinha por lá! 🛠️",
+  "Anotado por aqui! ✍️ Enquanto isso, você já viu os detalhes do seu contrato na aba 📄 O Contrato?",
+  "Show! 🎉 Isso costuma estar explicado direitinho na aba do Condomínio 🏢 — dá uma espiada lá!",
+  "Entendi! 💙 Pra assuntos mais específicos do seu apê, o time de atendimento consegue te dar uma resposta certeira. Bora abrir um chamado? 🙌"
+];
+
+function scrollChatToBottom(){ chatBody.scrollTop = chatBody.scrollHeight; }
+
+function addBubble(text, sender){
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble ' + sender;
+  bubble.textContent = text;
+  chatBody.appendChild(bubble);
+  scrollChatToBottom();
+}
+
+function showTyping(){
+  const typing = document.createElement('div');
+  typing.className = 'bubble typing';
+  typing.id = 'typingIndicator';
+  typing.innerHTML = '<span></span><span></span><span></span>';
+  chatBody.appendChild(typing);
+  scrollChatToBottom();
+}
+
+function removeTyping(){
+  const typing = document.getElementById('typingIndicator');
+  if (typing) typing.remove();
+}
+
+function sendMessage(){
+  const text = chatInput.value.trim();
+  if (!text) return;
+  addBubble(text, 'user');
+  chatInput.value = '';
+  showTyping();
+  setTimeout(() => {
+    removeTyping();
+    const reply = botReplies[Math.floor(Math.random() * botReplies.length)];
+    addBubble(reply, 'bot');
+  }, 1500);
+}
+
+sendBtn.addEventListener('click', sendMessage);
+chatInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') { e.preventDefault(); sendMessage(); }
+});
+</script>
+
+</body>
+</html>
